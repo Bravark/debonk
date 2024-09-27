@@ -1,0 +1,35 @@
+name: sunsnipe
+
+services:
+  debonk-db:
+    image: postgres:15
+    restart: always
+    container_name: debonk-db
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    ports:
+      - 5436:5432
+    environment:
+      POSTGRES_USER: pposttgresxdb
+      POSTGRES_PASSWORD: 3353
+      POSTGRES_DB: nest
+#     networks:
+#       - sun_network
+#   app:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile
+#     container_name: sun-snipe-tg-bot
+#     restart: always
+#     environment:
+#       - PORT=3009
+#     ports:
+#       - "3009:3009"
+#     depends_on:
+#       - sun-snipe-bot-db
+#     volumes:
+#       - ./src:/app/src
+#     networks:
+#       - sun_network
+# networks:
+#   sun_network:

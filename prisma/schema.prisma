@@ -1,0 +1,141 @@
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+  id          Int      @id @default(autoincrement())
+  telegramId  String   @unique
+  wallet Wallet[]
+  transactions Transaction[]
+
+  simulationBalance Decimal @default(10)
+
+  positions Position[]
+
+  referredBy Int @default(0)
+  referralProfit Float @default(0.0000)
+  referralCashOut referralCashOut[]
+  
+
+  metadata        String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt()@default(now())
+}
+
+model Wallet {
+  id             String   @id @default(cuid())
+  address         String @unique
+  isPrimary        Boolean 
+  user           User     @relation(fields: [userId], references: [id])
+  userId        Int
+
+  transactions Transaction[]
+  hash           String?
+
+  chain          String?
+
+  positions Position[]
+
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+}
+
+model Transaction {
+  id             Int      @id @default(autoincrement())
+  user           User     @relation(fields: [userId], references: [id])
+  userId        Int
+  wallet         Wallet   @relation(fields: [walletId], references: [id])
+  walletId       String
+
+  status         TransactionStatus
+
+  tokenAddress    String
+  tokenTicker     String
+  amountBought   String
+  transactionType String?
+  buyHash         String
+  buyPrice String 
+
+  sellHash         String?
+  amountSold        String?
+  sellPrice         String?
+
+  metadata        Json?
+  timestamp       DateTime @default(now())
+  created_at     DateTime @default(now())
+}
+
+model Position {
+  id             Int      @id @default(autoincrement())
+  user           User     @relation(fields: [userId], references: [id])
+  userId         Int
+  wallet         Wallet   @relation(fields: [walletId], references: [id])
+  walletId       String
+  isSimulation Boolean @default(false)
+
+  tokenAddress   String
+  tokenTicker    String
+  amountHeld     String   // Total amount of the token held
+  avgBuyPrice    String   // Average buy price for the token
+  currentValue   String?  // Current market value of the token (optional)
+  profitLoss     String?  // Calculated profit or loss (optional)
+
+  metadata       Json?
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+}
+
+model TokenTracking {
+  tokenAddress     String  
+  
+  details Json[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@unique([ tokenAddress]) // Ensure unique user-token tracking
+}
+
+model UserTokenTrackingData {
+  chatId_tokenAddress     String  
+  userTokenGif String  
+
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@unique([ chatId_tokenAddress]) // Ensure unique user-token tracking
+}
+
+model referralCashOut {
+  id             Int      @id @default(autoincrement())
+  userId         Int
+  amount          Float
+  status         String @default("created")
+  payoutAddress String
+  transactionId  String? @unique
+  payoutHash    String?
+
+  user           User     @relation(fields: [userId], references: [id])
+
+  metadata        String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+
+
+
+enum TransactionStatus {
+  none
+  bought
+  sold
+}
