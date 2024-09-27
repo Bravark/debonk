@@ -20,8 +20,8 @@ services:
       - PGADMIN_DEFAULT_PASSWORD=pgadmin4forpouch
     ports:
       - "5050:80"
-    depends_on:
-      - debonk-db
+    # depends_on:
+    #   - debonk-db
 #     networks:
 #       - sun_network
 #   app:
