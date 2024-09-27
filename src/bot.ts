@@ -24,6 +24,7 @@ import { getUserFromTelegramId, prisma } from "./prisma";
 import { queryCallBack, queryCallBackDevBot } from "./keyboardResponses";
 
 import {
+  ADMIN_BOT_KEY,
   BACK_BUTTON,
   BOT_USERNAME,
   INITIAL_INLINE_KEYBOARD,
@@ -45,6 +46,8 @@ if (!BOT_TOKEN) {
 devBot.on("callback_query", queryCallBackDevBot);
 
 const bottoken = BOT_TOKEN;
+
+console.log("ADMIN_BOT_KEY: ", ADMIN_BOT_KEY);
 
 let bot: TelegramBot;
 
