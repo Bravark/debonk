@@ -1,3 +1,6 @@
+// add dotenv
+require("dotenv").config();
+
 export const CHAINSTACK_RPC =
   "https://solana-mainnet.core.chainstack.com/2c30818c32edc444fcfc56cbbded3b48";
 export const mainnetEndpoint =
@@ -351,6 +354,7 @@ export const ADMIN_KEYBOARD_QUERY = {
   //ADMIN
   ADMIN_UPDATE_USER_PROFIT: "admin_update_user_profit",
 };
+console.log("process.env.ENV: ", process.env.ENV);
 
 export const DEV_TELEGRAM_ID = 1729044712;
 
