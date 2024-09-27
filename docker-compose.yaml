@@ -1,16 +1,16 @@
 services:
-  debonk-db:
-    image: postgres:15
-    restart: always
-    container_name: debonk-db
-    volumes:
-      - ./pgdata:/var/lib/postgresql/data
-    ports:
-      - 5436:5432
-    environment:
-      POSTGRES_USER: pposttgresxdb
-      POSTGRES_PASSWORD: 3353
-      POSTGRES_DB: nest
+  # debonk-db:
+  #   image: postgres:15
+  #   restart: always
+  #   container_name: debonk-db
+  #   volumes:
+  #     - ./pgdata:/var/lib/postgresql/data
+  #   ports:
+  #     - 5436:5432
+  #   environment:
+  #     POSTGRES_USER: pposttgresxdb
+  #     POSTGRES_PASSWORD: 3353
+  #     POSTGRES_DB: nest
   pgadmin:
     image: dpage/pgadmin4
     restart: always
