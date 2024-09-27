@@ -1,8 +1,13 @@
-import { createReferralCashOut, getReferralProfit } from "../prisma";
+import {
+  createReferralCashOut,
+  getReferralProfit,
+  getUserFromTelegramId,
+} from "../prisma";
 import { bot, getAddressFromTelegramId, getSolPrice } from "../helper";
 import {
   ADMIN_BOT_KEY,
   ADMIN_KEYBOARD_QUERY,
+  BOT_USERNAME,
   DEV_TELEGRAM_ID,
   KEYBOARD_QUERY,
   MIN_PROFIT_WITHDRAWAL_AMOUNT,
@@ -107,5 +112,43 @@ export const handleGetReferralProfits = async (
       },
     }
   );
+};
+
+export const handleShowReferralDetails = async (
+  chatId: string,
+  message: TelegramBot.Message
+) => {
+  const telegramId = message.chat.id.toString();
+  if (!telegramId) {
+    bot.sendMessage(chatId, "Something went wrong");
+    return;
+  }
+  const user = await getUserFromTelegramId(telegramId!);
+  if (!user) {
+    bot.sendMessage(chatId, "Error: User not found. click /start");
+    return;
+  }
+  bot.sendMessage(
+    chatId,
+    `💰You Earn when you Refer a Friend, \nHere is your referral Code: \nhttps://t.me/${BOT_USERNAME}?start=ref_${user.id}`,
+    {
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: ` 💰 Share Referral Link`, // Button text
+              switch_inline_query: `https://t.me/${BOT_USERNAME}?start=ref_${user.id}`, // The URL that will be opened
+            },
+          ],
+        ],
+      },
+    }
+  );
+
+  try {
+    await handleGetReferralProfits(message, chatId.toString());
+  } catch (error) {
+    console.log("error: ", error);
+  }
 };
 export { devBot };

@@ -60,6 +60,7 @@ import {
   validateAmountGetTokenAndBuySimulation,
 } from "./simulation";
 import { truncate } from "fs/promises";
+import { handleGetReferralProfits } from "./referrals/handleKeyboardResponses";
 
 const handleUserBuy = async (chatId: string, message: TelegramBot.Message) => {
   //collet all the details for the buy transaction

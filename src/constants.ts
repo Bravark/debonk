@@ -99,6 +99,8 @@ export const KEYBOARD_QUERY = {
   UPDATE_TOKEN_DETAILS_BY_CA: "update_token_details_by_ca",
   S_UPDATE_TOKEN_DETAILS_BY_CA: "s_update_token_details_by_ca",
 
+  SHOW_REFERRAL_DETAILS: "show_referred_details",
+
   BRIDGE_ROUTE: {
     SOL: {
       TEXT: "Sol -> Sol",
@@ -183,6 +185,16 @@ export const INITIAL_INLINE_KEYBOARD = [
     {
       text: "Settings",
       callback_data: KEYBOARD_QUERY.SETTINGS,
+    },
+  ],
+  [
+    {
+      text: "Refer Your Friend",
+      callback_data: KEYBOARD_QUERY.SHOW_REFERRAL_DETAILS,
+    },
+    {
+      text: "Wallet",
+      callback_data: KEYBOARD_QUERY.SHOW_WALLET,
     },
   ],
 

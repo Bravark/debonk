@@ -35,8 +35,10 @@ import { devBot } from "./admin/admin";
 
 import { handleUserBuyPositions } from "./handleKeyboardResponse";
 import { handleUserBuyPositionsSimulation } from "./simulation";
-import { handleGetReferralProfits } from "./referrals/handleKeyboardResponses";
-import { getContractAddressFromTextOrLink } from "./utils";
+import {
+  handleGetReferralProfits,
+  handleShowReferralDetails,
+} from "./referrals/handleKeyboardResponses";
 
 const { BOT_TOKEN } = process.env;
 if (!BOT_TOKEN) {
@@ -46,8 +48,6 @@ if (!BOT_TOKEN) {
 devBot.on("callback_query", queryCallBackDevBot);
 
 const bottoken = BOT_TOKEN;
-
-console.log("ADMIN_BOT_KEY: ", ADMIN_BOT_KEY);
 
 let bot: TelegramBot;
 
@@ -187,39 +187,9 @@ bot.onText(/\/wallet/, async (msg) => {
 
 bot.onText(/\/referral/, async (msg) => {
   //gets all the token that is supported
-  const chatId = msg.chat.id;
-  const telegramId = msg.from?.id.toString();
-  if (!telegramId) {
-    bot.sendMessage(chatId, "Something went wrong");
-    return;
-  }
-  const user = await getUserFromTelegramId(telegramId!);
-  if (!user) {
-    bot.sendMessage(chatId, "Error: User not found. click /start");
-    return;
-  }
-  bot.sendMessage(
-    chatId,
-    `💰You Earn when you Refer a Friend, \nHere is your referral Code: \nhttps://t.me/${BOT_USERNAME}?start=ref_${user.id}`,
-    {
-      reply_markup: {
-        inline_keyboard: [
-          [
-            {
-              text: ` 💰 Share Referral Link`, // Button text
-              switch_inline_query: `https://t.me/${BOT_USERNAME}?start=ref_${user.id}`, // The URL that will be opened
-            },
-          ],
-        ],
-      },
-    }
-  );
+  const chatId = msg.chat.id.toString();
 
-  try {
-    await handleGetReferralProfits(msg, chatId.toString());
-  } catch (error) {
-    console.log("error: ", error);
-  }
+  await handleShowReferralDetails(chatId, msg);
 });
 
 bot.onText(/\/key/, async (msg) => {
