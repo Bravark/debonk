@@ -182,10 +182,6 @@ export const INITIAL_INLINE_KEYBOARD = [
       text: "Positions",
       callback_data: KEYBOARD_QUERY.POSITIONS,
     },
-    {
-      text: "Settings",
-      callback_data: KEYBOARD_QUERY.SETTINGS,
-    },
   ],
   [
     {
