@@ -37,7 +37,10 @@ import {
   handleAdminUpdateUserCashOutProfit,
   reFreshPoolingDevBot,
 } from "./admin/admin";
-import { handleWithdrawProfits } from "./referrals/handleKeyboardResponses";
+import {
+  handleShowReferralDetails,
+  handleWithdrawProfits,
+} from "./referrals/handleKeyboardResponses";
 
 export const queryCallBack = async (
   callbackQuery: TelegramBot.CallbackQuery
@@ -399,6 +402,19 @@ export const queryCallBack = async (
         console.log("error: ", error);
         toast(chatId.toString(), "An error occurred: ");
       }
+      break;
+
+    case KEYBOARD_QUERY.SHOW_REFERRAL_DETAILS:
+      bot.answerCallbackQuery(callbackQuery.id, {
+        text: "Buy Token",
+      });
+      try {
+        await handleShowReferralDetails(chatId.toString(), message);
+      } catch (error) {
+        console.log("error: ", error);
+        toast(chatId.toString(), "An error occurred: ");
+      }
+
       break;
     case KEYBOARD_QUERY.UPDATE_SHOW_WALLET:
       bot.answerCallbackQuery(callbackQuery.id, {
