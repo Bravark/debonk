@@ -71,11 +71,7 @@ bot.onText(/^\/start$/, async (msg, match) => {
 bot.onText(/\/start (.+)?/, async (msg, match) => {
   const chatId = msg.chat.id;
   const telegramId = msg.from?.id;
-  try {
-    bot.deleteMessage(chatId, msg.message_id);
-  } catch (error) {
-    console.log("error: ", error);
-  }
+
   try {
     if (!telegramId) {
       bot.sendMessage(chatId, "Something went wrong");
@@ -100,6 +96,11 @@ bot.onText(/\/start (.+)?/, async (msg, match) => {
       sentText.startsWith("token_") ||
       sentText.startsWith("stoken_")
     ) {
+      try {
+        bot.deleteMessage(chatId, msg.message_id);
+      } catch (error) {
+        console.log("error: ", error);
+      }
       const isSim = sentText.startsWith("stoken_") ? true : false;
       console.log("isSim: ", isSim);
       const tokenAddress = sentText.split("_")[1];
