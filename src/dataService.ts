@@ -26,6 +26,7 @@ export const getTokenDetails_DEXTOOLS = async (token: string) => {
       }
     );
     const _data = await res.json();
+    console.log("_data: ", _data);
 
     const data = _data.data[0] as DexToolResponse;
 

@@ -271,18 +271,18 @@ const handleEnterSimulation = async (
           inline_keyboard: [
             [
               {
-                text: "Simulation Buy",
+                text: "🧪💸 Simulation Buy",
                 callback_data: KEYBOARD_QUERY.S_BUY,
               },
 
               {
-                text: "Simulation Sell",
+                text: "🧪💴 Simulation Sell",
                 callback_data: KEYBOARD_QUERY.S_SELL,
               },
             ],
             [
               {
-                text: "View Simulation Position",
+                text: "🧪📝 View Simulation Position",
                 callback_data: KEYBOARD_QUERY.S_POSITIONS,
               },
             ],

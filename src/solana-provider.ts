@@ -17,17 +17,22 @@ import {
   ComputeBudgetProgram,
   MessageV0,
   ParsedAccountData,
+  TransactionError,
 } from "@solana/web3.js";
 import bs58 from "bs58";
 import { Buffer } from "buffer";
 import * as ed25519 from "ed25519-hd-key";
 import { Wallet } from "@project-serum/anchor";
 import {
+  CHAINSTACK_RPC,
   DEV_SOL_WALLET,
   HELIUS_RPC_HTTPS,
+  mainnetEndpoint,
   QUICKNODE_SOL_MAINNET,
   QUICKNODE_SOL_MAINNET_WS,
+  RPC_HTTPS_URLS,
   SOL_CONTRACT,
+  SOLANA_ERROR_CODES,
 } from "./constants";
 import {
   getAssociatedTokenAddress,
@@ -49,6 +54,8 @@ import { createJupiterApiClient, QuoteResponse } from "@jup-ag/api";
 import { transactionSenderAndConfirmationWaiter } from "./transactionSender";
 import { publicKey } from "@project-serum/anchor/dist/cjs/utils";
 import { creditReferral } from "./referrals/referrals";
+import { triggerAsyncId } from "async_hooks";
+import { getSwapError, SLippageExceedingError } from "./errors/solanaError";
 
 const jupiterQuoteApi = createJupiterApiClient();
 
@@ -142,8 +149,10 @@ export class MasterSolSmartWalletClass {
       // If you are getting an invalid account error, make sure that you have the input mint account to actually swap from.
       console.error("Simulation Error:");
       console.error(err);
+
       console.error(logs);
-      return { status };
+
+      return { status, error: err };
     }
 
     // Execute the transaction
@@ -705,7 +714,9 @@ export class UserSolSmartWalletClass {
       console.log("error: ", error);
       throw new Error(`invalid private keyPair`);
     }
-    this.connection = new Connection(HELIUS_RPC_HTTPS);
+    this.connection = new Connection(
+      RPC_HTTPS_URLS[Math.floor(Math.random() * RPC_HTTPS_URLS.length)]
+    );
   }
 
   static validateSolAddress(address: string) {
@@ -717,12 +728,16 @@ export class UserSolSmartWalletClass {
     }
   }
   static getSolBalance = async (address: string) => {
-    const connection = new Connection(QUICKNODE_SOL_MAINNET);
+    const connection = new Connection(
+      RPC_HTTPS_URLS[Math.floor(Math.random() * RPC_HTTPS_URLS.length)]
+    );
     try {
       const publicKey = new PublicKey(address);
-      return await connection.getBalance(publicKey);
+      const bal = await connection.getBalance(publicKey);
+      return bal;
     } catch (error) {
       console.log("error: ", error);
+      console.log("error message: ", error.message);
       throw new Error(
         `the address passed is not a valid solana address : ${address}`
       );
@@ -815,7 +830,7 @@ export class UserSolSmartWalletClass {
     );
     let latestBlockhash = await this.connection.getLatestBlockhash();
 
-    const { explorerUrl, status } =
+    const { explorerUrl, status, error } =
       await MasterSolSmartWalletClass.createSendConfirmRetryDeserializedTransaction(
         swapTransactionBuf,
         [this.keyPair],
@@ -828,7 +843,9 @@ export class UserSolSmartWalletClass {
       console.log("balance: ", (balance / LAMPORTS_PER_SOL).toFixed(9));
     });
     if (!status) {
-      throw new Error(`The transaction failed: ${explorerUrl}`);
+      //check what type of error it is
+      const error_ = await getSwapError(error);
+      throw error_;
     }
     return explorerUrl;
   };
@@ -857,6 +874,9 @@ export class UserSolSmartWalletClass {
       );
       status = true;
     } catch (error) {
+      if (error instanceof SLippageExceedingError) {
+        throw error;
+      }
       console.log("error: ", error);
       status = false;
     }
@@ -903,6 +923,7 @@ export class UserSolSmartWalletClass {
         "SELL",
         params.slippage
       );
+
       // we collect our fees here
       console.log("feesAmount: ", feesAmount);
       try {
@@ -927,6 +948,9 @@ export class UserSolSmartWalletClass {
 
       status = true;
     } catch (error) {
+      if (error instanceof SLippageExceedingError) {
+        throw error;
+      }
       console.log("error: ", error);
     }
 

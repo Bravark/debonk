@@ -6,6 +6,7 @@ import {
   UserSolSmartWalletClass,
 } from "./solana-provider";
 import { deriveUserIndex, getContractAddressFromTextOrLink } from "./utils";
+
 import {
   BuyTokenParams,
   DexToolResponse,
@@ -51,6 +52,7 @@ import {
   getTokenDetails_DEXTOOLS,
 } from "./dataService";
 import { bs58 } from "@project-serum/anchor/dist/cjs/utils/bytes";
+import { SLippageExceedingError } from "./errors/solanaError";
 
 // add dotenv
 require("dotenv").config();
@@ -134,7 +136,7 @@ export const start = async (msg: TelegramBot.Message) => {
     const { solUsdPrice } = await UserSolSmartWalletClass.getSolPrice();
     bot.sendMessage(
       chatId,
-      `Welcome to DE BONK! \n\n Here is your Wallet Address \n\n\`${address}\`\nBalance : ${balance}(${formatCurrency(
+      `Welcome to DEBONK! \n\n Here is your Wallet Address \n\n\`${address}\`\nBalance : ${balance}(${formatCurrency(
         balance * solUsdPrice
       )})\n ${addressLink}\n\n Simulation Balance : ${user.simulationBalance.toFixed(
         2
@@ -469,10 +471,13 @@ const validateAmountGetTokenAndBuy = async (
     toast(chatId, "Insufficient SOL balance. Please top up your wallet.");
     return;
   }
-  if (userBalance < amount + LEAST_AMOUNT_REMAINDER) {
+  console.log("amount: ", amount);
+  console.log("LEAST_AMOUNT_REMAINDER: ", LEAST_AMOUNT_REMAINDER);
+  const leastToHave = Number(amount) + Number(LEAST_AMOUNT_REMAINDER);
+  if (userBalance < leastToHave) {
     toast(
       chatId,
-      "Insufficient SOL balance for gas. Please top up your wallet."
+      `Insufficient SOL balance for gas. Please top up your wallet.\n You must have at least: ${leastToHave}Sol`
     );
     return;
   }
@@ -482,7 +487,7 @@ const validateAmountGetTokenAndBuy = async (
   if (tokenAddressMatch && tokenAddressMatch[1]) {
     const tokenAddress = tokenAddressMatch[1];
 
-    const res = await doUserBuyToken(tokenAddress, amount, telegramId);
+    const res = await doUserBuyToken(tokenAddress, amount, telegramId, chatId);
     if (!res.status) {
       bot.sendMessage(chatId, "Buy Transaction Failed");
       return;
@@ -545,6 +550,7 @@ const validateAmountGetTokenAndSell = async (
     const { result, amountToSell } = await doUserSellTokenPercent(
       tokenAddress,
       percentToSell,
+      chatId,
       telegramId
     );
     res = result;
@@ -560,7 +566,8 @@ const validateAmountGetTokenAndSell = async (
     const { result } = await doUserSellTokenSol(
       tokenAddress,
       amount.toString(),
-      telegramId
+      telegramId,
+      chatId
     );
     res = result;
   } else {
@@ -783,7 +790,8 @@ const sendUserWalletDetails = async (
 const doUserBuyToken = async (
   tokenAddress: string,
   amount: number,
-  telegramId: string
+  telegramId: string,
+  chatId: string
 ) => {
   const userKey = getPrivateKeyFromTelegramId(telegramId);
   const userClass = new UserSolSmartWalletClass(userKey);
@@ -794,6 +802,9 @@ const doUserBuyToken = async (
   try {
     return await userClass.buy(params);
   } catch (error) {
+    if (error instanceof SLippageExceedingError) {
+      bot.sendMessage(chatId, `Slippage Error`);
+    }
     console.log("error: ", error);
   }
 };
@@ -802,6 +813,7 @@ const doUserSellTokenPercent = async (
   tokenAddress: string,
   percentToSell: PercentRange,
   telegramId: string,
+  chatId: string,
   slippage?: number
 ) => {
   const userKey = getPrivateKeyFromTelegramId(telegramId);
@@ -817,6 +829,9 @@ const doUserSellTokenPercent = async (
     return await userClass.sell(params);
   } catch (error) {
     console.log("error: ", error);
+    if (error instanceof SLippageExceedingError) {
+      bot.sendMessage(chatId, `Slippage Error`);
+    }
   }
 };
 
@@ -824,6 +839,7 @@ const doUserSellTokenSol = async (
   tokenAddress: string,
   amountToSellInSol: string,
   telegramId: string,
+  chatId: string,
   slippage?: number
 ) => {
   const userKey = getPrivateKeyFromTelegramId(telegramId);
@@ -839,6 +855,9 @@ const doUserSellTokenSol = async (
     return await userClass.sell(params);
   } catch (error) {
     console.log("error: ", error);
+    if (error instanceof SLippageExceedingError) {
+      bot.sendMessage(chatId, `Slippage Error`);
+    }
   }
 };
 

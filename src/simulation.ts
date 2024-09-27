@@ -76,13 +76,13 @@ export const validateAmountGetTokenAndBuySimulation = async (
           inline_keyboard: [
             [
               {
-                text: "View Simulation Position",
+                text: "🧪📝 View Simulation Position",
                 callback_data: KEYBOARD_QUERY.S_POSITIONS,
               },
             ],
             [
               {
-                text: "Simulation Buy",
+                text: "🧪💸 Simulation Buy",
                 callback_data: KEYBOARD_QUERY.S_BUY,
               },
             ],

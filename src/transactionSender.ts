@@ -1,5 +1,6 @@
 import {
   BlockhashWithExpiryBlockHeight,
+  Commitment,
   Connection,
   TransactionExpiredBlockheightExceededError,
   VersionedTransactionResponse,
@@ -14,7 +15,8 @@ type TransactionSenderAndConfirmationWaiterArgs = {
 };
 
 const SEND_OPTIONS = {
-  skipPreflight: false,
+  skipPreflight: true,
+  preflightCommitment: "processed" as Commitment,
 };
 
 export async function transactionSenderAndConfirmationWaiter({

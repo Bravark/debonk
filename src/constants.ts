@@ -17,15 +17,17 @@ export const HELIUS_RPC_HTTPS =
 export const QUICKNODE_SOL_MAINNET_WS =
   "wss://tiniest-alien-sanctuary.solana-mainnet.quiknode.pro/bdf774f6d62abcde6d14aaceb577f20403a74ed2";
 
-export const LUNCHPAD_ADDRESS = "TTfvyrAz86hbZk5iDpKD78pqLGgi8C7AAw";
-
-export const SUNSWAP_FACTORY = "TKWJdrQkqHisa1X8HUdHEfREvTzw4pMAaY";
-
-export const SUNSWAP_ROUTER = "TKzxdSv2FZKQrEqkKVgp5DcwEXBEKMg2Ax";
 export const SOL_CONTRACT = "So11111111111111111111111111111111111111112";
 
 //?FOR SOME REASON THEY DIVIDED BONK TOKEN BY 5 INSTAED FO THE NORMAL LAPORTS PERS OL
 export const DIV = 5;
+
+export const RPC_HTTPS_URLS = [
+  "https://mainnet.helius-rpc.com/?api-key=e052d4b4-b524-4d7e-9c1f-921f207125d6",
+  "https://tiniest-alien-sanctuary.solana-mainnet.quiknode.pro/bdf774f6d62abcde6d14aaceb577f20403a74ed2",
+  "https://solana-mainnet.g.alchemy.com/v2/Cmez3a2JqTIw7UWHdELw_41zxbSFzJlU",
+  "https://solana-mainnet.core.chainstack.com/2c30818c32edc444fcfc56cbbded3b48",
+];
 
 export const LEAST_AMOUNT_REMAINDER = 0.01;
 
@@ -167,36 +169,36 @@ export const KING_LIST_INLINE_KEYBOARD = [
 export const INITIAL_INLINE_KEYBOARD = [
   [
     {
-      text: "Buy",
+      text: "💸 Buy",
       callback_data: KEYBOARD_QUERY.BUY,
     },
 
     {
-      text: "Sell",
+      text: "💴 Sell",
       callback_data: KEYBOARD_QUERY.SELL,
     },
   ],
 
   [
     {
-      text: "Positions",
+      text: "📝 Positions",
       callback_data: KEYBOARD_QUERY.POSITIONS,
     },
   ],
   [
     {
-      text: "Refer Your Friend",
+      text: "🤑 Refer Your Friend",
       callback_data: KEYBOARD_QUERY.SHOW_REFERRAL_DETAILS,
     },
     {
-      text: "Wallet",
+      text: "💳 Wallet",
       callback_data: KEYBOARD_QUERY.SHOW_WALLET,
     },
   ],
 
   [
     {
-      text: " Enter Simulation ",
+      text: "🧪📊 Enter Simulation ",
       callback_data: KEYBOARD_QUERY.ENTER_SIMULATION,
     },
   ],
@@ -237,13 +239,13 @@ export const COLLECT_BUY_AMOUNT_INLINE_KEYBOARD = [
       callback_data: KEYBOARD_QUERY.BUY_AMOUNT.B_1,
     },
     {
-      text: `X SOL`,
+      text: `X SOL✏`,
       callback_data: KEYBOARD_QUERY.BUY_AMOUNT.CUSTOM,
     },
   ],
   [
     {
-      text: "Refresh",
+      text: "🔄 Refresh",
       callback_data: KEYBOARD_QUERY.UPDATE_TOKEN_BUY_TEXT,
     },
     ...BACK_BUTTON,
@@ -279,13 +281,13 @@ export const COLLECT_BUY_AMOUNT_INLINE_KEYBOARD_SIMULATION = [
   ],
   [
     {
-      text: `View Simulation Position `,
+      text: `🧪📝 View Simulation Position `,
       callback_data: KEYBOARD_QUERY.S_POSITIONS,
     },
   ],
   [
     {
-      text: `Refresh`,
+      text: `🔄 Refresh`,
       callback_data: KEYBOARD_QUERY.S_UPDATE_TOKEN_BUY_TEXT,
     },
     ...BACK_BUTTON,
@@ -445,4 +447,9 @@ export const evmChainsMap: { [key: string]: string } = {
   oasis: "eth", // Oasis Emerald
   theta: "eth", // Theta
   conflux: "eth", // Conflux eSpace
+};
+
+export const SOLANA_ERROR_CODES = {
+  SLIPPAGE_TOLERANCE_EXCEEDED: "0x1771",
+  TIME_STAMP_ERROR: "0x1786",
 };

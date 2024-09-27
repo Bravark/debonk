@@ -130,7 +130,7 @@ export const handleShowReferralDetails = async (
   }
   bot.sendMessage(
     chatId,
-    `💰You Earn when you Refer a Friend, \nHere is your referral Code: \nhttps://t.me/${BOT_USERNAME}?start=ref_${user.id}`,
+    `💰Earn 50% fees through debonk’s multi-level referral system:\n\n- 35% for direct referrals,\n- 10% for second-generation referrals, &\n- 5% for third-generation referrals. \nHere is your referral Code: \nhttps://t.me/${BOT_USERNAME}?start=ref_${user.id}`,
     {
       reply_markup: {
         inline_keyboard: [
