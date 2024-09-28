@@ -84,5 +84,5 @@ const updateIndirectReferralCount = async () => {
   });
 };
 
-updateIndirectReferralCount();
-updateDirectReferralCount();
+// updateIndirectReferralCount();
+// updateDirectReferralCount();
