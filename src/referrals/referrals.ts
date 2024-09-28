@@ -70,9 +70,10 @@ const updateIndirectReferralCount = async () => {
   const allUsers = await getAllUsers();
   //check for the users that has referredBy for each user and since that returns another userId use that to increment the referralCountDirect for the user, and also the referredBy of the user will also increment the referralCountIndirect of the user
   allUsers.forEach(async (user) => {
-    console.log("user.referredBy: ", user.referredBy);
+    console.log("user.referredBy indirect: ", user.referredBy);
     if (user.referredBy) {
       const ruser = await getUserById(user.referredBy);
+      console.log(" ruser.referralCountDirect: ", ruser.referralCountDirect);
       if (ruser.referralCountIndirect === 0) {
         await incrementReferralCountIndirect(
           user.referredBy,
