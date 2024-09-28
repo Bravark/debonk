@@ -370,7 +370,6 @@ export const ADMIN_KEYBOARD_QUERY = {
   //ADMIN
   ADMIN_UPDATE_USER_PROFIT: "admin_update_user_profit",
 };
-console.log("process.env.ENV: ", process.env.ENV);
 
 export const DEV_TELEGRAM_ID = 1729044712;
 

@@ -52,10 +52,36 @@ export const creditReferral = async (
   // Now the user has a referral
 };
 
-// const updateReferralCount = async () => {
-//   const allUsers = await getAllUsers();
-//   //check for the users that has referredBy for each user and since that returns another userId use that to increment the referralCountDirect for the user, and also the referredBy of the user will also increment the referralCountIndirect of the user
-//   allUsers.forEach((user) => {
-//     incrementReferralCountDirect(user.referredBy);
-//   });
-// };
+const updateDirectReferralCount = async () => {
+  const allUsers = await getAllUsers();
+  //check for the users that has referredBy for each user and since that returns another userId use that to increment the referralCountDirect for the user, and also the referredBy of the user will also increment the referralCountIndirect of the user
+  allUsers.forEach(async (user) => {
+    console.log("user.referredBy: ", user.referredBy);
+    if (user.referredBy) {
+      const ruser = await getUserById(user.referredBy);
+      if (ruser.referralCountDirect === 0) {
+        await incrementReferralCountDirect(user.referredBy);
+      }
+    }
+  });
+};
+
+const updateIndirectReferralCount = async () => {
+  const allUsers = await getAllUsers();
+  //check for the users that has referredBy for each user and since that returns another userId use that to increment the referralCountDirect for the user, and also the referredBy of the user will also increment the referralCountIndirect of the user
+  allUsers.forEach(async (user) => {
+    console.log("user.referredBy: ", user.referredBy);
+    if (user.referredBy) {
+      const ruser = await getUserById(user.referredBy);
+      if (ruser.referralCountIndirect === 0) {
+        await incrementReferralCountIndirect(
+          user.referredBy,
+          ruser.referralCountDirect
+        );
+      }
+    }
+  });
+};
+
+updateIndirectReferralCount();
+updateDirectReferralCount();

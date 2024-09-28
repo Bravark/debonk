@@ -124,8 +124,13 @@ export const start = async (
 
     const user = await prisma.user.upsert({
       where: { telegramId: telegramId.toString() },
-      update: referralCode ? { referredBy: referralCode } : {},
+      update: { referredBy: referralCode ? referralCode : 0 },
       create: { telegramId: telegramId.toString() },
+    });
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { referredBy: referralCode ? referralCode : 0 },
     });
 
     const address = getAddressFromTelegramId(telegramId.toString());

@@ -2,7 +2,6 @@ import { DexToolResponse, ResponseObject, TokenDetails } from "./types";
 import { calculatePercentageChange } from "./utils";
 
 export const getTokenDetails_DEXTOOLS = async (token: string) => {
-  console.log("token: ", token);
   try {
     const res = await fetch(
       `https://www.dextools.io/shared/search/pair?query=${token}&strict=true`,
@@ -31,7 +30,6 @@ export const getTokenDetails_DEXTOOLS = async (token: string) => {
     } else {
       data = _data.results[0] as DexToolResponse;
     }
-    console.log("data: ", data);
 
     let result: TokenDetails;
 

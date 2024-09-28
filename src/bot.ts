@@ -63,7 +63,6 @@ bot.on("polling_error", (pollError) => {
 bot.on("callback_query", queryCallBack);
 
 bot.onText(/^\/start$/, async (msg, match) => {
-  console.log("match: ", match);
   if (match[0] === "/start") {
     await start(msg);
   }
@@ -92,6 +91,7 @@ bot.onText(/\/start (.+)?/, async (msg, match) => {
       const referralCode = parseInt(sentText.split("_")[1]);
       console.log("referralCode: ", referralCode);
       //TODO REFERRAL CODE HERE
+
       await start(msg, referralCode);
     } else if (
       sentText.startsWith("token_") ||
@@ -103,9 +103,7 @@ bot.onText(/\/start (.+)?/, async (msg, match) => {
         console.log("error: ", error);
       }
       const isSim = sentText.startsWith("stoken_") ? true : false;
-      console.log("isSim: ", isSim);
       const tokenAddress = sentText.split("_")[1];
-      console.log("tokenAddress: ", tokenAddress);
 
       let tokenText: string;
       try {
