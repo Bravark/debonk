@@ -35,8 +35,11 @@ import {
 import numeral from "numeral";
 import {
   getBuyTransaction,
+  getUserById,
   getUserFromTelegramId,
   getUserFromWalletAddress,
+  incrementReferralCountDirect,
+  incrementReferralCountIndirect,
   prisma,
   updatePositionOnBuy,
   updatePositionOnSell,
@@ -128,11 +131,6 @@ export const start = async (
       create: { telegramId: telegramId.toString() },
     });
 
-    await prisma.user.update({
-      where: { id: user.id },
-      data: { referredBy: referralCode ? referralCode : 0 },
-    });
-
     const address = getAddressFromTelegramId(telegramId.toString());
 
     await prisma.wallet.upsert({
@@ -156,6 +154,20 @@ export const start = async (
         disable_web_page_preview: true,
       }
     );
+    if (referralCode) {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { referredBy: referralCode },
+      });
+      //LEVEL 1
+      await incrementReferralCountDirect(referralCode);
+      //LEVEL 2
+      const directedReferral = await getUserById(referralCode);
+      await incrementReferralCountIndirect(directedReferral.referredBy);
+      //LEVEL 3
+      const level2Referral = await getUserById(directedReferral.referredBy);
+      await incrementReferralCountIndirect(level2Referral.referredBy);
+    }
   } catch (error) {
     console.log("error: ", error);
     await reFreshPooling();
