@@ -24,6 +24,7 @@ import { Buffer } from "buffer";
 import * as ed25519 from "ed25519-hd-key";
 import { Wallet } from "@project-serum/anchor";
 import {
+  APPLICATION_ERROR,
   CHAINSTACK_RPC,
   DEV_SOL_WALLET,
   FEE_TOKEN_ACCOUNT_FOR_WSOL,
@@ -174,7 +175,9 @@ export class MasterSolSmartWalletClass {
     // If we are not getting a response back, the transaction has not confirmed.
     if (!transactionResponse) {
       console.error("Transaction not confirmed");
-      return;
+      //!WE SHOULD RETRY THE TRANSACTION AGAIN HERE
+
+      return { error: "transaction_not_confirmed" };
     }
 
     if (transactionResponse.meta?.err) {
@@ -819,7 +822,7 @@ export class UserSolSmartWalletClass {
       }
     } catch (error) {
       console.log("error: ", error);
-      console.log("error: ", typeof error);
+      throw new Error(APPLICATION_ERROR.JUPITER_SWAP_ERROR);
     }
 
     const wallet = new Wallet(this.keyPair);
@@ -880,6 +883,9 @@ export class UserSolSmartWalletClass {
       status = true;
     } catch (error) {
       if (error instanceof SLippageExceedingError) {
+        throw error;
+      }
+      if (error.message === APPLICATION_ERROR.JUPITER_SWAP_ERROR) {
         throw error;
       }
       console.log("error: ", error);
@@ -957,6 +963,10 @@ export class UserSolSmartWalletClass {
       if (error instanceof SLippageExceedingError) {
         throw error;
       }
+      if (error.message === APPLICATION_ERROR.JUPITER_SWAP_ERROR) {
+        throw error;
+      }
+      console.log("error: ", error);
       console.log("error: ", error);
     }
 

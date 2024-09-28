@@ -458,3 +458,6 @@ export const SOLANA_ERROR_CODES = {
   SLIPPAGE_TOLERANCE_EXCEEDED: "0x1771",
   TIME_STAMP_ERROR: "0x1786",
 };
+export const APPLICATION_ERROR = {
+  JUPITER_SWAP_ERROR: "quote_swap_error",
+};

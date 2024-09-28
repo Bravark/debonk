@@ -19,6 +19,7 @@ import {
   TokenDetails,
 } from "./types";
 import {
+  APPLICATION_ERROR,
   BACK_BUTTON,
   COLLECT_BUY_AMOUNT_INLINE_KEYBOARD,
   COLLECT_SELL_AMOUNT_INLINE_KEYBOARD,
@@ -163,9 +164,15 @@ export const start = async (
       await incrementReferralCountDirect(referralCode);
       //LEVEL 2
       const directedReferral = await getUserById(referralCode);
+      if (!directedReferral) {
+        return;
+      }
       await incrementReferralCountIndirect(directedReferral.referredBy);
       //LEVEL 3
       const level2Referral = await getUserById(directedReferral.referredBy);
+      if (!level2Referral) {
+        return;
+      }
       await incrementReferralCountIndirect(level2Referral.referredBy);
     }
   } catch (error) {
@@ -831,6 +838,9 @@ const doUserBuyToken = async (
   } catch (error) {
     if (error instanceof SLippageExceedingError) {
       bot.sendMessage(chatId, `Slippage Error`);
+    }
+    if (error.message === APPLICATION_ERROR.JUPITER_SWAP_ERROR) {
+      bot.sendMessage(chatId, "The Token is Not Tradable");
     }
     console.log("error: ", error);
   }
