@@ -2,8 +2,11 @@
 
 import { REFERRAL_PERCENTS } from "../constants";
 import {
+  getAllUsers,
   getUserById,
   getUserFromWalletAddress,
+  incrementReferralCountDirect,
+  incrementReferralCountIndirect,
   updateUserReferralBalance,
 } from "../prisma";
 
@@ -48,3 +51,11 @@ export const creditReferral = async (
 
   // Now the user has a referral
 };
+
+// const updateReferralCount = async () => {
+//   const allUsers = await getAllUsers();
+//   //check for the users that has referredBy for each user and since that returns another userId use that to increment the referralCountDirect for the user, and also the referredBy of the user will also increment the referralCountIndirect of the user
+//   allUsers.forEach((user) => {
+//     incrementReferralCountDirect(user.referredBy);
+//   });
+// };

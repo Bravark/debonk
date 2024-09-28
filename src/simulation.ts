@@ -27,6 +27,7 @@ import {
   BOT_USERNAME,
   COLLECT_BUY_AMOUNT_INLINE_KEYBOARD_SIMULATION,
   COLLECT_SELL_AMOUNT_INLINE_KEYBOARD_SIMULATION,
+  COULD_NOT_GET_TOKEN_DETAILS_TEXT,
   INITIAL_INLINE_KEYBOARD,
   KEYBOARD_QUERY,
   YOU_ARE_IN_THE_SIMULATION_TEXT,
@@ -418,6 +419,7 @@ export const handleUserBuySimulation = async (
     );
 
     token = getContractAddressFromTextOrLink(xtoken);
+    console.log("token: ", token);
   }
 
   const telegramId = message.chat.id;
@@ -425,7 +427,7 @@ export const handleUserBuySimulation = async (
   try {
     tokenText = await getTokenText(token, telegramId.toString(), true);
   } catch (error) {
-    toast(chatId, "Could not get token Details");
+    bot.sendMessage(chatId, COULD_NOT_GET_TOKEN_DETAILS_TEXT);
   }
   const tokenTextSim = `${YOU_ARE_IN_THE_SIMULATION_TEXT}\n${tokenText}`;
 
@@ -526,13 +528,13 @@ const validateAmountGetTokenAndSellSimulation = async (
           [
             ...BACK_BUTTON,
             {
-              text: "Wallet",
+              text: "💳 Wallet",
               callback_data: KEYBOARD_QUERY.SHOW_WALLET,
             },
           ],
           [
             {
-              text: "Active Positions",
+              text: "📝Active Positions",
               callback_data: KEYBOARD_QUERY.S_POSITIONS,
             },
           ],
@@ -589,7 +591,7 @@ export const sendTokenDetailsByCASimulation = async (
   try {
     tokenText = await getTokenText(tokenAddress, telegramId.toString(), true);
   } catch (error) {
-    toast(chatId.toString(), "Could not get token Details");
+    bot.sendMessage(chatId.toString(), COULD_NOT_GET_TOKEN_DETAILS_TEXT);
 
     return null;
   }
@@ -603,7 +605,7 @@ export const sendTokenDetailsByCASimulation = async (
     [...COLLECT_SELL_AMOUNT_INLINE_KEYBOARD_SIMULATION[1]],
     [
       {
-        text: "Simulation Positions",
+        text: "🧪📝 Simulation Positions",
         callback_data: KEYBOARD_QUERY.S_POSITIONS,
       },
     ],

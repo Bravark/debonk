@@ -214,7 +214,7 @@ export const queryCallBack = async (
 
     case KEYBOARD_QUERY.S_POSITIONS:
       bot.answerCallbackQuery(callbackQuery.id, {
-        text: "Simulation Positions",
+        text: "🧪📝 Simulation Positions",
       });
       try {
         await handleUserBuyPositionsSimulation(chatId.toString(), message);
@@ -226,7 +226,7 @@ export const queryCallBack = async (
 
     case KEYBOARD_QUERY.UPDATE_S_POSITIONS:
       bot.answerCallbackQuery(callbackQuery.id, {
-        text: "Update Simulation Positions",
+        text: "🔄 Update Simulation Positions",
       });
       try {
         await handleUpdateUserBuyPositionsSimulation(
@@ -341,7 +341,7 @@ export const queryCallBack = async (
 
     case KEYBOARD_QUERY.ENTER_SIMULATION:
       bot.answerCallbackQuery(callbackQuery.id, {
-        text: "Enter Simulation",
+        text: " 🧪📊 Enter Simulation",
       });
       try {
         await handleEnterSimulation(chatId.toString(), message);

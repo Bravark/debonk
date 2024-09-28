@@ -25,7 +25,6 @@ export const DIV = 5;
 export const RPC_HTTPS_URLS = [
   "https://mainnet.helius-rpc.com/?api-key=e052d4b4-b524-4d7e-9c1f-921f207125d6",
   "https://tiniest-alien-sanctuary.solana-mainnet.quiknode.pro/bdf774f6d62abcde6d14aaceb577f20403a74ed2",
-  "https://solana-mainnet.g.alchemy.com/v2/Cmez3a2JqTIw7UWHdELw_41zxbSFzJlU",
   "https://solana-mainnet.core.chainstack.com/2c30818c32edc444fcfc56cbbded3b48",
 ];
 
@@ -128,6 +127,10 @@ export const KEYBOARD_QUERY = {
 export interface Validator<T> {
   (value: T): Promise<boolean>;
 }
+
+export const FEE_TOKEN_MINT = "So11111111111111111111111111111111111111112";
+export const FEE_TOKEN_ACCOUNT_FOR_WSOL =
+  "51h481kJwJaWussDQgBUG9YuvpEwytwxmh9WLps4aJww";
 export const TOKEN_LIST_INLINE_KEYBOARD = [
   [
     {
@@ -254,7 +257,8 @@ export const COLLECT_BUY_AMOUNT_INLINE_KEYBOARD = [
 
 export const DEV_SOL_WALLET = `2xwSvyjJoeUWngstxADHrvYwuxhB5XuLfVawYqEUYdGD`;
 
-export const BOT_USERNAME = `debonk_bot`;
+export const BOT_USERNAME =
+  process.env.ENV == "production" ? `debonk_bot` : "debonk_test_bot";
 
 export const YOU_ARE_IN_THE_SIMULATION_TEXT = `-------------------------\n You are in a Simulation\n NO REAL MONEY IS BEING TRADED \n -------------------------\n`;
 
@@ -315,11 +319,13 @@ export const COLLECT_SELL_AMOUNT_INLINE_KEYBOARD = [
       callback_data: KEYBOARD_QUERY.SELL_PERCENT.S_100,
     },
     {
-      text: `X SOL`,
+      text: `X SOL ✏`,
       callback_data: KEYBOARD_QUERY.SELL_PERCENT.CUSTOM,
     },
   ],
 ];
+
+export const COULD_NOT_GET_TOKEN_DETAILS_TEXT = `⚠Could not get token details\n\n -Please Make sure you are passing a token Contract Address or the pair address, and not a Wallet Address.\n -You can also Directly paste Links from Dex Screener, Dex Tools, Rug Checker, Bird Eye and others. `;
 
 export const COLLECT_SELL_AMOUNT_INLINE_KEYBOARD_SIMULATION = [
   [
@@ -349,7 +355,7 @@ export const COLLECT_SELL_AMOUNT_INLINE_KEYBOARD_SIMULATION = [
 export const MIN_PROFIT_WITHDRAWAL_AMOUNT = 0.05;
 
 export const REFERRAL_PERCENTS = {
-  LEVEL_1: 25,
+  LEVEL_1: 35,
   LEVEL_2: 10,
   LEVEL_3: 5,
 };

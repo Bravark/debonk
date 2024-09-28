@@ -364,6 +364,42 @@ export const updateUserCashOut = async (
   });
 };
 
+export const getAllUsers = async () => {
+  try {
+    return prisma.user.findMany();
+  } catch (error) {
+    console.log("error: ", error);
+  }
+};
+
+export const incrementReferralCountDirect = async (
+  userId: number,
+  count = 1
+) => {
+  return prisma.user.update({
+    where: { id: userId },
+    data: {
+      referralCountDirect: {
+        increment: count,
+      },
+    },
+  });
+};
+
+export const incrementReferralCountIndirect = async (
+  userId: number,
+  count = 1
+) => {
+  return prisma.user.update({
+    where: { id: userId },
+    data: {
+      referralCountIndirect: {
+        increment: count,
+      },
+    },
+  });
+};
+
 export const updateUserReferralBalance = async (
   userId: number,
   amountToUpdate: number

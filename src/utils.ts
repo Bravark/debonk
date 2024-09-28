@@ -36,7 +36,12 @@ export const solAddressValidator: Validator<string> = async (value: string) => {
   try {
     new PublicKey(xValue);
     status = true;
-  } catch (error) {}
+  } catch (error) {
+    if (xValue.length === 44) {
+      status = true;
+    }
+  }
+  console.log("status: ", status);
   return status;
 };
 

@@ -23,6 +23,7 @@ import {
   COLLECT_BUY_AMOUNT_INLINE_KEYBOARD,
   COLLECT_SELL_AMOUNT_INLINE_KEYBOARD,
   COLLECT_SELL_AMOUNT_INLINE_KEYBOARD_SIMULATION,
+  COULD_NOT_GET_TOKEN_DETAILS_TEXT,
   evmChainsMap,
   INITIAL_INLINE_KEYBOARD,
   KEYBOARD_QUERY,
@@ -113,14 +114,17 @@ export const getPrivateKeyFromTelegramId = (telegramId: string): Keypair => {
   return Keypair;
 };
 
-export const start = async (msg: TelegramBot.Message) => {
+export const start = async (
+  msg: TelegramBot.Message,
+  referralCode?: number
+) => {
   try {
     const chatId = msg.chat.id;
     const telegramId = msg.from?.id;
 
     const user = await prisma.user.upsert({
       where: { telegramId: telegramId.toString() },
-      update: {},
+      update: referralCode ? { referredBy: referralCode } : {},
       create: { telegramId: telegramId.toString() },
     });
 
@@ -250,7 +254,9 @@ const colletTextFromUser = <T>(
 const getTokenDetails = async (token: string): Promise<TokenDetails> => {
   const isAddress = MasterSolSmartWalletClass.validateSolAddress(token);
   if (!isAddress) {
-    throw new Error("Invalid address");
+    if (!token || !(token.length === 44)) {
+      throw new Error("invalid_address");
+    }
   }
 
   let data: TokenDetails;
@@ -388,6 +394,10 @@ const getTokenText = async (
 
     return text;
   } catch (error) {
+    if ((error.message = `invalid_address`)) {
+      console.log("address passed");
+      throw error;
+    }
     console.log("error: ", error);
     throw error;
   }
@@ -872,7 +882,10 @@ export const sendSellTokenMessage = async (
   try {
     tokenText = await getTokenText(token, telegramId.toString(), isSIm);
   } catch (error) {
-    toast(chatId, "Could not get token Details: Possibly Invalid Address");
+    bot.sendMessage(
+      chatId,
+      `${COULD_NOT_GET_TOKEN_DETAILS_TEXT}: Possibly Invalid Address`
+    );
   }
 
   if (isSIm) {
@@ -901,7 +914,7 @@ const sendTokenDetailsByCA = async (
   try {
     tokenText = await getTokenText(tokenAddress, telegramId.toString(), false);
   } catch (error) {
-    toast(chatId.toString(), "Could not get token Details");
+    bot.sendMessage(chatId.toString(), COULD_NOT_GET_TOKEN_DETAILS_TEXT);
 
     return null;
   }
@@ -913,13 +926,13 @@ const sendTokenDetailsByCA = async (
     [...COLLECT_SELL_AMOUNT_INLINE_KEYBOARD[1]],
     [
       {
-        text: "Enter Simulation",
+        text: "🧪📊 Enter Simulation",
         callback_data: KEYBOARD_QUERY.ENTER_SIMULATION,
       },
     ],
     [
       {
-        text: "Refresh",
+        text: "🔄 Refresh",
         callback_data: KEYBOARD_QUERY.UPDATE_TOKEN_DETAILS_BY_CA,
       },
       ...BACK_BUTTON,
@@ -965,6 +978,7 @@ const replyToAnyhowSentMessage = async (msg: TelegramBot.Message) => {
     }
 
     const ca = getContractAddressFromTextOrLink(text);
+    console.log("ca: ", ca);
     await sendTokenDetailsByCA(chatId, ca, telegramId);
   } catch (err) {}
 };

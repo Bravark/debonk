@@ -27,6 +27,7 @@ import {
   ADMIN_BOT_KEY,
   BACK_BUTTON,
   BOT_USERNAME,
+  COULD_NOT_GET_TOKEN_DETAILS_TEXT,
   INITIAL_INLINE_KEYBOARD,
   KEYBOARD_QUERY,
 } from "./constants";
@@ -91,7 +92,7 @@ bot.onText(/\/start (.+)?/, async (msg, match) => {
       const referralCode = parseInt(sentText.split("_")[1]);
       console.log("referralCode: ", referralCode);
       //TODO REFERRAL CODE HERE
-      //we will do the referral thing here
+      await start(msg, referralCode);
     } else if (
       sentText.startsWith("token_") ||
       sentText.startsWith("stoken_")
@@ -114,7 +115,7 @@ bot.onText(/\/start (.+)?/, async (msg, match) => {
           isSim
         );
       } catch (error) {
-        toast(chatId.toString(), "Could not get token Details");
+        bot.sendMessage(chatId.toString(), COULD_NOT_GET_TOKEN_DETAILS_TEXT);
       }
 
       const tt = await bot.sendMessage(chatId, tokenText, {
@@ -139,6 +140,7 @@ bot.onText(/\/start (.+)?/, async (msg, match) => {
       });
       //we will do the token thing here
     } else {
+      await start(msg);
       console.log("invalid start command : ", sentText);
     }
   } catch (error) {

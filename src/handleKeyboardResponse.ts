@@ -26,6 +26,7 @@ import {
   COLLECT_BUY_AMOUNT_INLINE_KEYBOARD,
   COLLECT_BUY_AMOUNT_INLINE_KEYBOARD_SIMULATION,
   COLLECT_SELL_AMOUNT_INLINE_KEYBOARD,
+  COULD_NOT_GET_TOKEN_DETAILS_TEXT,
   INITIAL_INLINE_KEYBOARD,
   KEYBOARD_QUERY,
   KING_LIST_INLINE_KEYBOARD,
@@ -105,7 +106,7 @@ const collectTokenText = async (
   try {
     tokenText = await getTokenText(token, telegramId.toString());
   } catch (error) {
-    toast(chatId, "Could not get token Details");
+    bot.sendMessage(chatId, COULD_NOT_GET_TOKEN_DETAILS_TEXT);
   }
 
   return tokenText;
@@ -167,7 +168,7 @@ const handleUserSell = async (chatId: string, message: TelegramBot.Message) => {
   try {
     tokenText = await getTokenText(token, telegramId.toString());
   } catch (error) {
-    toast(chatId, "Could not get token Details");
+    bot.sendMessage(chatId, COULD_NOT_GET_TOKEN_DETAILS_TEXT);
   }
   const tt = await bot.sendMessage(chatId, tokenText, {
     reply_markup: {
@@ -600,7 +601,7 @@ const getPositionText = async (telegramId: string) => {
     }\n`;
   }
 
-  text += `\n\n_Last refresh time : ${getCurrentDate()}_`;
+  text += `\n\n_Last refresh time : ${getCurrentDate()} UTC_`;
 
   return { text, tokenListPosition };
 };

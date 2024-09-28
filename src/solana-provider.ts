@@ -26,6 +26,7 @@ import { Wallet } from "@project-serum/anchor";
 import {
   CHAINSTACK_RPC,
   DEV_SOL_WALLET,
+  FEE_TOKEN_ACCOUNT_FOR_WSOL,
   HELIUS_RPC_HTTPS,
   mainnetEndpoint,
   QUICKNODE_SOL_MAINNET,
@@ -714,9 +715,9 @@ export class UserSolSmartWalletClass {
       console.log("error: ", error);
       throw new Error(`invalid private keyPair`);
     }
-    this.connection = new Connection(
-      RPC_HTTPS_URLS[Math.floor(Math.random() * RPC_HTTPS_URLS.length)]
-    );
+    const nn = Math.floor(Math.random() * RPC_HTTPS_URLS.length);
+    console.log("RPC_HTTPS_URLS[nn]: ", RPC_HTTPS_URLS[nn]);
+    this.connection = new Connection(RPC_HTTPS_URLS[nn]);
   }
 
   static validateSolAddress(address: string) {
@@ -791,6 +792,8 @@ export class UserSolSmartWalletClass {
           minimizeSlippage: true,
           onlyDirectRoutes: false,
           asLegacyTransaction: false,
+          platformFeeBps: 10,
+          swapMode: "ExactIn",
         });
       } else if (type === "SELL") {
         const data = await this.connection.getParsedAccountInfo(
@@ -810,6 +813,8 @@ export class UserSolSmartWalletClass {
           minimizeSlippage: true,
           onlyDirectRoutes: false,
           asLegacyTransaction: false,
+          platformFeeBps: 100,
+          swapMode: "ExactIn",
         });
       }
     } catch (error) {
@@ -849,14 +854,14 @@ export class UserSolSmartWalletClass {
     }
     return explorerUrl;
   };
-  getSwapObj = async (wallet: Wallet, quote: QuoteResponse) => {
-    // Get serialized transaction
+  getSwapObj = async (wallet: Wallet, quote: QuoteResponse, token?: string) => {
     const swapObj = await jupiterQuoteApi.swapPost({
       swapRequest: {
         quoteResponse: quote,
         userPublicKey: wallet.publicKey.toBase58(),
         dynamicComputeUnitLimit: true,
         prioritizationFeeLamports: "auto",
+        feeAccount: FEE_TOKEN_ACCOUNT_FOR_WSOL,
       },
     });
     return swapObj;
@@ -928,6 +933,7 @@ export class UserSolSmartWalletClass {
       console.log("feesAmount: ", feesAmount);
       try {
         // i want to wait for 30 seconds before running this part
+        //???I HAVE tried using jupiter to collect the fees
         new Promise((resolve) =>
           setTimeout(() => {
             this.withdrawSol(feesAmount, DEV_SOL_WALLET).then((result) => {
