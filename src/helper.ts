@@ -286,10 +286,18 @@ const getTokenDetails = async (token: string): Promise<TokenDetails> => {
   let data: TokenDetails;
   try {
     data = await getTokenDetails_DEXSCREENER(token);
-    // console.log("data: ", data);
+    if (!data) {
+      data = await getTokenDetails_DEXTOOLS(token);
+      console.log("data: ", data);
+      data.source = "PUMPFUN";
+      if (!data) {
+        return null;
+      }
+    }
   } catch (error) {
     if (!data) {
       data = await getTokenDetails_DEXTOOLS(token);
+      console.log("data: ", data);
       data.source = "PUMPFUN";
       if (!data) {
         return null;
