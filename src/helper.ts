@@ -288,7 +288,7 @@ const getTokenDetails = async (token: string): Promise<TokenDetails> => {
     data = await getTokenDetails_DEXSCREENER(token);
     if (!data) {
       data = await getTokenDetails_DEXTOOLS(token);
-      console.log("data: ", data);
+      // console.log("data: ", data);
       data.source = "PUMPFUN";
       if (!data) {
         return null;
@@ -297,7 +297,7 @@ const getTokenDetails = async (token: string): Promise<TokenDetails> => {
   } catch (error) {
     if (!data) {
       data = await getTokenDetails_DEXTOOLS(token);
-      console.log("data: ", data);
+      // console.log("data: ", data);
       data.source = "PUMPFUN";
       if (!data) {
         return null;
