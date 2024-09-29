@@ -538,72 +538,76 @@ const getPositionText = async (telegramId: string) => {
     text += "\nNo active positions";
   }
 
-  const tokenListPosition: { tokenName: string; address: string }[] = [];
-  for (const position of positions) {
-    const tokenDetails = await getTokenDetails(position.tokenAddress);
-    tokenListPosition.push({
-      tokenName: tokenDetails.name,
-      address: position.tokenAddress,
-    });
-    const PNL_usd = await calculateProfitLoss(
-      user.id,
-      wallet.id,
-      position.tokenAddress,
-      tokenDetails.priceUsd.toString()
-    );
-    const PNL_sol = PNL_usd / solPrice;
-    const PNL_Sol_percent = (
-      (PNL_sol /
-        (parseInt(position.amountHeld) * parseFloat(position.avgBuyPrice))) *
-      solPrice *
-      100
-    ).toFixed(2);
+  try {
+    const tokenListPosition: { tokenName: string; address: string }[] = [];
+    for (const position of positions) {
+      const tokenDetails = await getTokenDetails(position.tokenAddress);
+      tokenListPosition.push({
+        tokenName: tokenDetails.name,
+        address: position.tokenAddress,
+      });
+      const PNL_usd = await calculateProfitLoss(
+        user.id,
+        wallet.id,
+        position.tokenAddress,
+        tokenDetails.priceUsd.toString()
+      );
+      const PNL_sol = PNL_usd / solPrice;
+      const PNL_Sol_percent = (
+        (PNL_sol /
+          (parseInt(position.amountHeld) * parseFloat(position.avgBuyPrice))) *
+        solPrice *
+        100
+      ).toFixed(2);
 
-    const balance = await getUserTokenBalance(
-      position.tokenAddress,
-      telegramId
-    );
-    const _balance = formatter({
-      decimal: 5,
-    }).format(balance);
+      const balance = await getUserTokenBalance(
+        position.tokenAddress,
+        telegramId
+      );
+      const _balance = formatter({
+        decimal: 5,
+      }).format(balance);
 
-    const currentPrice = formatter({
-      decimal: 8,
-    }).format(Number(tokenDetails.priceUsd.toString()));
+      const currentPrice = formatter({
+        decimal: 8,
+      }).format(Number(tokenDetails.priceUsd.toString()));
 
-    const ch = `${formatCurrencyWithoutDollarSign(
-      balance * Number(tokenDetails.priceNative)
-    )} SOL (${formatCurrency(balance * tokenDetails.priceUsd)})`;
+      const ch = `${formatCurrencyWithoutDollarSign(
+        balance * Number(tokenDetails.priceNative)
+      )} SOL (${formatCurrency(balance * tokenDetails.priceUsd)})`;
 
-    const PNL_usd_percent = (
-      (PNL_usd /
-        (parseInt(position.amountHeld) * parseFloat(position.avgBuyPrice))) *
-      100
-    ).toFixed(2);
-    const nameWithLink = `[${position.tokenTicker}](https://t.me/${BOT_USERNAME}?start=token_${position.tokenAddress})`;
-    text += `\n- ${nameWithLink} |  ${ch}\n`;
-    text += `CA: \`${position.tokenAddress}\`\n`;
-    text += ` 💎\n`;
-    text += `  |-Current Price : $${currentPrice}\n`;
-    text += `  |-MC: $${tokenDetails.mc}\n`;
-    text += `  |-Capital: ${(
-      (parseFloat(position.avgBuyPrice) * parseFloat(position.amountHeld)) /
-      solPrice
-    ).toFixed(2)} Sol ($${(
-      parseFloat(position.avgBuyPrice) * parseFloat(position.amountHeld)
-    ).toFixed(2)})\n`;
-    text += `  |-Current value: ${ch}\n`;
-    text += `  |-PNL USD: ${PNL_usd_percent}% ($${PNL_usd.toFixed()}) ${
-      PNL_usd > 0 ? "🟩" : "🟥"
-    }\n`;
-    text += `  |-PNL SOL: ${PNL_Sol_percent}% (${PNL_sol.toFixed(2)} SOL) ${
-      PNL_sol > 0 ? "🟩" : "🟥"
-    }\n`;
+      const PNL_usd_percent = (
+        (PNL_usd /
+          (parseInt(position.amountHeld) * parseFloat(position.avgBuyPrice))) *
+        100
+      ).toFixed(2);
+      const nameWithLink = `[${position.tokenTicker}](https://t.me/${BOT_USERNAME}?start=token_${position.tokenAddress})`;
+      text += `\n- ${nameWithLink} |  ${ch}\n`;
+      text += `CA: \`${position.tokenAddress}\`\n`;
+      text += ` 💎\n`;
+      text += `  |-Current Price : $${currentPrice}\n`;
+      text += `  |-MC: $${tokenDetails.mc}\n`;
+      text += `  |-Capital: ${(
+        (parseFloat(position.avgBuyPrice) * parseFloat(position.amountHeld)) /
+        solPrice
+      ).toFixed(2)} Sol ($${(
+        parseFloat(position.avgBuyPrice) * parseFloat(position.amountHeld)
+      ).toFixed(2)})\n`;
+      text += `  |-Current value: ${ch}\n`;
+      text += `  |-PNL USD: ${PNL_usd_percent}% ($${PNL_usd.toFixed()}) ${
+        PNL_usd > 0 ? "🟩" : "🟥"
+      }\n`;
+      text += `  |-PNL SOL: ${PNL_Sol_percent}% (${PNL_sol.toFixed(2)} SOL) ${
+        PNL_sol > 0 ? "🟩" : "🟥"
+      }\n`;
+    }
+
+    text += `\n\n_Last refresh time : ${getCurrentDate()} UTC_`;
+
+    return { text, tokenListPosition };
+  } catch (error) {
+    return { text: `could not get token Details`, tokenListPosition: [] };
   }
-
-  text += `\n\n_Last refresh time : ${getCurrentDate()} UTC_`;
-
-  return { text, tokenListPosition };
 };
 
 const handleBackToHome = async (

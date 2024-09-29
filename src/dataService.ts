@@ -30,6 +30,7 @@ export const getTokenDetails_DEXTOOLS = async (token: string) => {
     } else {
       data = _data.results[0] as DexToolResponse;
     }
+    // console.log("data: ", data);
 
     let result: TokenDetails;
 
@@ -87,36 +88,43 @@ export const getTokenDetails_DEXSCREENER = async (
   );
   const data: ResponseObject = await res.json();
 
-  if (data.pairs) {
-    let result: TokenDetails;
+  try {
+    console.log("data.pairs: ", data.pairs);
+    if (data.pairs) {
+      let result: TokenDetails;
 
-    result = {
-      name: data.pairs[0].baseToken.name,
-      symbol: data.pairs[0].baseToken.symbol,
-      address: data.pairs[0].baseToken.address,
-      priceUsd: Number(data.pairs[0].priceUsd),
-      priceNative: Number(data.pairs[0].priceNative),
-      mc: data.pairs[0].marketCap,
-      liquidityInUsd: data.pairs[0].liquidity.base,
-      telegramUrl: data.pairs[0].info.socials.find((s) => s.type === "telegram")
-        ?.url,
-      twitterUrl: data.pairs[0].info.socials.find((s) => s.type === "twitter")
-        ?.url,
-      websiteUrl: data.pairs[0].info.websites[0]?.url,
+      result = {
+        name: data.pairs[0].baseToken.name,
+        symbol: data.pairs[0].baseToken.symbol,
+        address: data.pairs[0].baseToken.address,
+        priceUsd: Number(data.pairs[0].priceUsd),
+        priceNative: Number(data.pairs[0].priceNative),
+        mc: data.pairs[0].marketCap,
+        liquidityInUsd: data.pairs[0].liquidity.base,
+        telegramUrl: data.pairs[0]?.info?.socials.find(
+          (s) => s.type === "telegram"
+        )?.url,
+        twitterUrl: data.pairs[0]?.info?.socials.find(
+          (s) => s.type === "twitter"
+        )?.url,
+        websiteUrl: data.pairs[0]?.info?.websites[0]?.url,
 
-      volume: {
-        m5: data.pairs[0].volume.m5,
-        h1: data.pairs[0].volume.h1,
-        h24: data.pairs[0].volume.h24,
-      },
-      change: {
-        m5: data.pairs[0].priceChange.m5,
-        h1: data.pairs[0].priceChange.h1,
-        h24: data.pairs[0].priceChange.h24,
-      },
-    };
+        volume: {
+          m5: data.pairs[0].volume.m5,
+          h1: data.pairs[0].volume.h1,
+          h24: data.pairs[0].volume.h24,
+        },
+        change: {
+          m5: data.pairs[0].priceChange.m5,
+          h1: data.pairs[0].priceChange.h1,
+          h24: data.pairs[0].priceChange.h24,
+        },
+      };
 
-    return result;
+      return result;
+    }
+  } catch (error) {
+    console.log("error: ", error);
+    return null;
   }
-  return null;
 };
