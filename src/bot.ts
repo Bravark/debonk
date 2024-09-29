@@ -6,15 +6,12 @@ import TelegramBot from "node-telegram-bot-api";
 //   getTransactionStatus,
 // } from "./changeNow";
 import {
-  formatCurrency,
-  getAddressFromTelegramId,
-  getPrivateKeyFromTelegramId,
   getPrivateKeyStingFromTelegramId,
   getTokenText,
-  getUserSolBalance,
+
   reFreshPooling,
   replyToAnyhowSentMessage,
-  sendTokenDetailsByCA,
+ 
   sendUserWalletDetails,
   start,
   toast,
@@ -24,12 +21,12 @@ import { getUserFromTelegramId, prisma } from "./prisma";
 import { queryCallBack, queryCallBackDevBot } from "./keyboardResponses";
 
 import {
-  ADMIN_BOT_KEY,
-  BACK_BUTTON,
-  BOT_USERNAME,
+ 
+  BUY_AND_SELL_KEYBOARD,
   COULD_NOT_GET_TOKEN_DETAILS_TEXT,
-  INITIAL_INLINE_KEYBOARD,
-  KEYBOARD_QUERY,
+ 
+  SIMULATION_BUY_AND_SELL_KEYBOARD,
+  YOU_ARE_IN_THE_SIMULATION_TEXT,
 } from "./constants";
 
 import { devBot } from "./admin/admin";
@@ -37,7 +34,7 @@ import { devBot } from "./admin/admin";
 import { handleUserBuyPositions } from "./handleKeyboardResponse";
 import { handleUserBuyPositionsSimulation } from "./simulation";
 import {
-  handleGetReferralProfits,
+  
   handleShowReferralDetails,
 } from "./referrals/handleKeyboardResponses";
 
@@ -103,6 +100,7 @@ bot.onText(/\/start (.+)?/, async (msg, match) => {
         console.log("error: ", error);
       }
       const isSim = sentText.startsWith("stoken_") ? true : false;
+
       const tokenAddress = sentText.split("_")[1];
 
       let tokenText: string;
@@ -115,23 +113,16 @@ bot.onText(/\/start (.+)?/, async (msg, match) => {
       } catch (error) {
         bot.sendMessage(chatId.toString(), COULD_NOT_GET_TOKEN_DETAILS_TEXT);
       }
+      let keyboard: TelegramBot.InlineKeyboardButton[][] =
+        BUY_AND_SELL_KEYBOARD;
+      if (isSim) {
+        tokenText = `${YOU_ARE_IN_THE_SIMULATION_TEXT}\n${tokenText}`;
+        keyboard = SIMULATION_BUY_AND_SELL_KEYBOARD;
+      }
 
       const tt = await bot.sendMessage(chatId, tokenText, {
         reply_markup: {
-          inline_keyboard: [
-            [
-              {
-                text: "Buy",
-                callback_data: KEYBOARD_QUERY.BUY,
-              },
-
-              {
-                text: "Sell",
-                callback_data: KEYBOARD_QUERY.SELL,
-              },
-            ],
-            BACK_BUTTON,
-          ],
+          inline_keyboard: keyboard,
         },
         disable_web_page_preview: true,
         parse_mode: "Markdown",
@@ -155,6 +146,7 @@ bot.onText(/\/positions/, async (msg) => {
     await reFreshPooling();
   }
 });
+
 bot.onText(/\/spositions/, async (msg) => {
   try {
     const chatId = msg.chat.id;

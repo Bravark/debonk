@@ -5,14 +5,13 @@ import {
 } from "../prisma";
 import { bot, getAddressFromTelegramId, getSolPrice } from "../helper";
 import {
-  ADMIN_BOT_KEY,
   ADMIN_KEYBOARD_QUERY,
   BOT_USERNAME,
   DEV_TELEGRAM_ID,
   KEYBOARD_QUERY,
   MIN_PROFIT_WITHDRAWAL_AMOUNT,
 } from "../constants";
-import { colletTextFromUser, solAddressValidator } from "../utils";
+
 import TelegramBot from "node-telegram-bot-api";
 import { devBot } from "../admin/admin";
 

@@ -8,7 +8,6 @@ import {
   handleBuyTokenCustomAmount,
   handleEnterSimulation,
   handleExportPrivateKey,
-  handleInitBridge,
   handleSellTokenAmount,
   handleSellTokenPercent,
   handleShowUserWalletDetails,
@@ -41,6 +40,7 @@ import {
   handleShowReferralDetails,
   handleWithdrawProfits,
 } from "./referrals/handleKeyboardResponses";
+import { handleInitBridge } from "./bridge/bridge";
 
 export const queryCallBack = async (
   callbackQuery: TelegramBot.CallbackQuery

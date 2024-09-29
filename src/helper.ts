@@ -21,6 +21,7 @@ import {
 import {
   APPLICATION_ERROR,
   BACK_BUTTON,
+  BUY_AND_SELL_KEYBOARD,
   COLLECT_BUY_AMOUNT_INLINE_KEYBOARD,
   COLLECT_SELL_AMOUNT_INLINE_KEYBOARD,
   COLLECT_SELL_AMOUNT_INLINE_KEYBOARD_SIMULATION,
@@ -786,23 +787,23 @@ const sendUserWalletDetails = async (
   const inlineKeys = [
     [
       {
-        text: "Withdraw Sol",
+        text: "🤑 Withdraw Sol",
         callback_data: KEYBOARD_QUERY.WITHDRAW_TRX,
       },
       {
-        text: "Export Key",
+        text: "Export Key 🔑",
         callback_data: KEYBOARD_QUERY.EXPORT_PRIVATE_KEY,
       },
     ],
     [
       {
-        text: "Bridge Chain",
+        text: "🚧 Bridge Chain",
         callback_data: KEYBOARD_QUERY.INIT_BRIDGE,
       },
     ],
     [
       {
-        text: "Refresh",
+        text: "🔄 Refresh",
         callback_data: KEYBOARD_QUERY.UPDATE_SHOW_WALLET,
       },
       ...BACK_BUTTON,
@@ -957,25 +958,7 @@ const sendTokenDetailsByCA = async (
     return null;
   }
 
-  const keyboardList = [
-    [...COLLECT_BUY_AMOUNT_INLINE_KEYBOARD[0]],
-    [...COLLECT_BUY_AMOUNT_INLINE_KEYBOARD[1]],
-    [...COLLECT_SELL_AMOUNT_INLINE_KEYBOARD[0]],
-    [...COLLECT_SELL_AMOUNT_INLINE_KEYBOARD[1]],
-    [
-      {
-        text: "🧪📊 Enter Simulation",
-        callback_data: KEYBOARD_QUERY.ENTER_SIMULATION,
-      },
-    ],
-    [
-      {
-        text: "🔄 Refresh",
-        callback_data: KEYBOARD_QUERY.UPDATE_TOKEN_DETAILS_BY_CA,
-      },
-      ...BACK_BUTTON,
-    ],
-  ];
+  const keyboardList = BUY_AND_SELL_KEYBOARD;
   if (!isUpdate) {
     const tt = await bot.sendMessage(chatId, tokenText, {
       reply_markup: {
@@ -1123,8 +1106,6 @@ function generateSocialsText(
 
 //for bridge
 
-const bridgeTokens = () => {};
-
 const standardizeNetwork = (network: string): string => {
   const standardized =
     networkMap[network.toLowerCase().trim().split(" ").join("")];
@@ -1139,8 +1120,6 @@ const customAddressValidation = (network: string, address: string): boolean => {
   return customAddressValidator.validate(address, network.toUpperCase());
   // return WAValidator.validate(address, network.toUpperCase());
 };
-
-const processBridge = async (params: SwapParams) => {};
 
 export {
   bot,

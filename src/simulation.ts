@@ -30,6 +30,7 @@ import {
   COULD_NOT_GET_TOKEN_DETAILS_TEXT,
   INITIAL_INLINE_KEYBOARD,
   KEYBOARD_QUERY,
+  SIMULATION_BUY_AND_SELL_KEYBOARD,
   YOU_ARE_IN_THE_SIMULATION_TEXT,
 } from "./constants";
 import TelegramBot from "node-telegram-bot-api";
@@ -598,25 +599,7 @@ export const sendTokenDetailsByCASimulation = async (
 
   const tokenTextSim = `${YOU_ARE_IN_THE_SIMULATION_TEXT}\n${tokenText}`;
 
-  const keyboardList = [
-    [...COLLECT_BUY_AMOUNT_INLINE_KEYBOARD_SIMULATION[0]],
-    [...COLLECT_BUY_AMOUNT_INLINE_KEYBOARD_SIMULATION[1]],
-    [...COLLECT_SELL_AMOUNT_INLINE_KEYBOARD_SIMULATION[0]],
-    [...COLLECT_SELL_AMOUNT_INLINE_KEYBOARD_SIMULATION[1]],
-    [
-      {
-        text: "🧪📝 Simulation Positions",
-        callback_data: KEYBOARD_QUERY.S_POSITIONS,
-      },
-    ],
-    [
-      {
-        text: "Refresh",
-        callback_data: KEYBOARD_QUERY.S_UPDATE_TOKEN_DETAILS_BY_CA,
-      },
-      ...BACK_BUTTON,
-    ],
-  ];
+  const keyboardList = SIMULATION_BUY_AND_SELL_KEYBOARD;
   if (!isUpdate) {
     const tt = await bot.sendMessage(chatId, tokenTextSim, {
       reply_markup: {

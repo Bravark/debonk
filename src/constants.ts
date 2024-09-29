@@ -461,3 +461,43 @@ export const SOLANA_ERROR_CODES = {
 export const APPLICATION_ERROR = {
   JUPITER_SWAP_ERROR: "quote_swap_error",
 };
+
+export const BUY_AND_SELL_KEYBOARD = [
+  [...COLLECT_BUY_AMOUNT_INLINE_KEYBOARD[0]],
+  [...COLLECT_BUY_AMOUNT_INLINE_KEYBOARD[1]],
+  [...COLLECT_SELL_AMOUNT_INLINE_KEYBOARD[0]],
+  [...COLLECT_SELL_AMOUNT_INLINE_KEYBOARD[1]],
+  [
+    {
+      text: "🧪📊 Enter Simulation",
+      callback_data: KEYBOARD_QUERY.ENTER_SIMULATION,
+    },
+  ],
+  [
+    {
+      text: "🔄 Refresh",
+      callback_data: KEYBOARD_QUERY.UPDATE_TOKEN_DETAILS_BY_CA,
+    },
+    ...BACK_BUTTON,
+  ],
+];
+
+export const SIMULATION_BUY_AND_SELL_KEYBOARD = [
+  [...COLLECT_BUY_AMOUNT_INLINE_KEYBOARD_SIMULATION[0]],
+  [...COLLECT_BUY_AMOUNT_INLINE_KEYBOARD_SIMULATION[1]],
+  [...COLLECT_SELL_AMOUNT_INLINE_KEYBOARD_SIMULATION[0]],
+  [...COLLECT_SELL_AMOUNT_INLINE_KEYBOARD_SIMULATION[1]],
+  [
+    {
+      text: "🧪📝 Simulation Positions",
+      callback_data: KEYBOARD_QUERY.S_POSITIONS,
+    },
+  ],
+  [
+    {
+      text: "Refresh",
+      callback_data: KEYBOARD_QUERY.S_UPDATE_TOKEN_DETAILS_BY_CA,
+    },
+    ...BACK_BUTTON,
+  ],
+];
