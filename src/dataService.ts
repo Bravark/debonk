@@ -89,7 +89,7 @@ export const getTokenDetails_DEXSCREENER = async (
   const data: ResponseObject = await res.json();
 
   try {
-    console.log("data.pairs: ", data.pairs);
+    // console.log("data.pairs: ", data.pairs);
     if (data.pairs) {
       let result: TokenDetails;
 
