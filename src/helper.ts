@@ -286,7 +286,7 @@ const getTokenDetails = async (token: string): Promise<TokenDetails> => {
   let data: TokenDetails;
   try {
     data = await getTokenDetails_DEXSCREENER(token);
-    console.log("data: ", data);
+    // console.log("data: ", data);
   } catch (error) {
     if (!data) {
       data = await getTokenDetails_DEXTOOLS(token);
