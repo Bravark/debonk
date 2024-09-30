@@ -585,7 +585,7 @@ const handleBackToHome = async (
     balance * solUsdPrice
   )})\n ${addressLink}\n\n Simulation Balance : ${user.simulationBalance.toFixed(
     2
-  )}SOL ($${(Number(user.simulationBalance) * solUsdPrice).toFixed})`;
+  )}SOL ($${(Number(user.simulationBalance) * solUsdPrice).toFixed(2)})`;
   try {
     bot.editMessageText(text, {
       reply_markup: { inline_keyboard: INITIAL_INLINE_KEYBOARD },

@@ -1,6 +1,12 @@
 import { AxiosHeaders } from "axios";
 import { createHash } from "crypto";
-import { KEYBOARD_QUERY, Validator } from "./constants";
+import {
+  EVM_CHAIN_MAP,
+  KEYBOARD_QUERY,
+  NETWORK_MAP,
+  TOKEN_MAP,
+  Validator,
+} from "./constants";
 import TelegramBot from "node-telegram-bot-api";
 import { Holder, ResponseObject, TokenData } from "./types";
 import numeral from "numeral";
@@ -475,3 +481,19 @@ export function getContractAddressFromTextOrLink(input: string) {
 
   return null; // No contract address found
 }
+
+export const standardizeNetwork = (network: string): string => {
+  const standardized =
+    NETWORK_MAP[network.toLowerCase().trim().split(" ").join("")];
+  return standardized ? standardized : network.toUpperCase(); // Default to the input in uppercase if not found
+};
+
+export const standardizeToken = (token: string): string => {
+  const standardized =
+    TOKEN_MAP[token.toLowerCase().trim().split(" ").join("")];
+  return standardized ? standardized : token.toUpperCase(); // Default to the input in uppercase if not found
+};
+export const standardizeAddressNetwork = (network: string): string => {
+  const standardized = EVM_CHAIN_MAP[network.toLowerCase().replace(/\s+/g, "")];
+  return standardized ? standardized : network.toLowerCase();
+};

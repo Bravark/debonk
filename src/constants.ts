@@ -190,7 +190,7 @@ export const INITIAL_INLINE_KEYBOARD = [
   ],
   [
     {
-      text: "🤑 Refer Your Friend",
+      text: "🤑 Refer & Earn",
       callback_data: KEYBOARD_QUERY.SHOW_REFERRAL_DETAILS,
     },
     {
@@ -375,7 +375,7 @@ export const DEV_TELEGRAM_ID = 1729044712;
 
 //for bridge
 
-export const networkMap: { [key: string]: string } = {
+export const NETWORK_MAP: { [key: string]: string } = {
   /**
    * this is for resolving similar networks and also resolving when the user input the network in a wired way
    */
@@ -399,7 +399,7 @@ export const networkMap: { [key: string]: string } = {
   // Add more mappings as needed
 };
 
-export const evmChainsMap: { [key: string]: string } = {
+export const EVM_CHAIN_MAP: { [key: string]: string } = {
   /**
    * this is for wallet address validation
    */
@@ -502,3 +502,22 @@ export const SIMULATION_BUY_AND_SELL_KEYBOARD = [
     ...BACK_BUTTON,
   ],
 ];
+
+export const TOKEN_MAP: { [key: string]: string } = {
+  /**
+   * this is for resolving similar networks and also resolving when the user input the network in a wired way
+   */
+  eth: "eth",
+  ethereum: "eth",
+  solana: "sol",
+  btc: "btc",
+  bitcoin: "btc",
+  avax: "cchain",
+  avaxc: "cchain",
+  polygon: "matic",
+  litecoin: "ltc",
+  tron: "trx",
+  trc20: "trx",
+
+  // Add more mappings as needed
+};

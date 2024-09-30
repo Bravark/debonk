@@ -26,11 +26,9 @@ import {
   COLLECT_SELL_AMOUNT_INLINE_KEYBOARD,
   COLLECT_SELL_AMOUNT_INLINE_KEYBOARD_SIMULATION,
   COULD_NOT_GET_TOKEN_DETAILS_TEXT,
-  evmChainsMap,
   INITIAL_INLINE_KEYBOARD,
   KEYBOARD_QUERY,
   LEAST_AMOUNT_REMAINDER,
-  networkMap,
   Validator,
   YOU_ARE_IN_THE_SIMULATION_TEXT,
 } from "./constants";
@@ -149,7 +147,7 @@ export const start = async (
         balance * solUsdPrice
       )})\n${addressLink}\n\n Simulation Balance : ${user.simulationBalance.toFixed(
         2
-      )}SOL ($${(Number(user.simulationBalance) * solUsdPrice).toFixed})`,
+      )}SOL ($${(Number(user.simulationBalance) * solUsdPrice).toFixed(2)})`,
       {
         reply_markup: { inline_keyboard: INITIAL_INLINE_KEYBOARD },
         parse_mode: "Markdown", // or "HTML" if you're using HTML formatting
@@ -810,7 +808,7 @@ const sendUserWalletDetails = async (
     balance * solUsdPrice
   )})\n ${addressLink}\n\n Simulation Balance : ${user.simulationBalance.toFixed(
     2
-  )}SOL ($${(Number(user.simulationBalance) * solUsdPrice).toFixed})`;
+  )}SOL ($${(Number(user.simulationBalance) * solUsdPrice).toFixed(2)})`;
 
   const inlineKeys = [
     [
@@ -1134,16 +1132,6 @@ function generateSocialsText(
 
 //for bridge
 
-const standardizeNetwork = (network: string): string => {
-  const standardized =
-    networkMap[network.toLowerCase().trim().split(" ").join("")];
-  return standardized ? standardized : network.toUpperCase(); // Default to the input in uppercase if not found
-};
-const standardizeAddressNetwork = (network: string): string => {
-  const standardized = evmChainsMap[network.toLowerCase().replace(/\s+/g, "")];
-  return standardized ? standardized : network.toLowerCase();
-};
-
 const customAddressValidation = (network: string, address: string): boolean => {
   return customAddressValidator.validate(address, network.toUpperCase());
   // return WAValidator.validate(address, network.toUpperCase());
@@ -1154,8 +1142,6 @@ export {
   toast,
   getUserSolBalance,
   customAddressValidation,
-  standardizeAddressNetwork,
-  standardizeNetwork,
   validateAmountGetTokenAndBuy,
   colletTextFromUser,
   getTokenDetails,

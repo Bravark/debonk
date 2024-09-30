@@ -72,6 +72,18 @@ const handleBridge = async (
   //At this stage either the normal or reverse has seen the transaction now, it is to confirm it and report to the user.
 };
 
+// const doBridge = async (params) => {
+//   const swapResponse = await createTransaction({
+//     fromCurrency: standardizeToken(fromCurrency),
+//     toCurrency: standardizeToken(toCurrency),
+//     fromAmount: fromAmount,
+//     address: address,
+//     fromNetwork: standardizeNetwork(fromNetwork),
+//     toNetwork: standardizeNetwork(toNetwork),
+//     flow: "standard",
+//   });
+// };
+
 const handleInitBridge = async (
   chatId: string,
   message: TelegramBot.Message
