@@ -16,7 +16,8 @@ import {
   handleValidationError,
   InputError,
 } from "./gracfullErrors";
-import { customAddressValidation, standardizeAddressNetwork } from "../helper";
+import { customAddressValidation } from "../helper";
+import { standardizeAddressNetwork } from "../utils";
 
 require("dotenv").config();
 

@@ -1,8 +1,8 @@
 import TelegramBot from "node-telegram-bot-api";
 import { SwapParams } from "./types";
 import { estimateExchangeAmount, getRange } from "./changeNow";
-import { bot, colletTextFromUser, standardizeNetwork, toast } from "../helper";
-import { numberValidator } from "../utils";
+import { bot, colletTextFromUser, toast } from "../helper";
+import { numberValidator, standardizeNetwork } from "../utils";
 import { BACK_BUTTON, KEYBOARD_QUERY } from "../constants";
 
 const bridgeTokens = () => {};
