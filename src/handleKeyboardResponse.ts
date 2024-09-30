@@ -175,7 +175,13 @@ const handleBuyTokenAmount = async (
   }
   toast(chatId, "Amount: " + amount);
 
-  await validateAmountGetTokenAndBuy(amount, chatId, telegramId, message.text);
+  await validateAmountGetTokenAndBuy(
+    amount,
+    chatId,
+    telegramId,
+    message.text,
+    message.message_id
+  );
 };
 
 const handleBuyTokenCustomAmount = async (
@@ -195,7 +201,13 @@ const handleBuyTokenCustomAmount = async (
 
   console.log("amount: ", amount);
 
-  await validateAmountGetTokenAndBuy(amount, chatId, telegramId, message.text);
+  await validateAmountGetTokenAndBuy(
+    amount,
+    chatId,
+    telegramId,
+    message.text,
+    message.message_id
+  );
 };
 const handleUpdateSendTokenDetailsByCA = async (
   chatId: string,
@@ -301,6 +313,7 @@ const handleSellTokenPercent = async (
     chatId,
     telegramId,
     message.text,
+    message.message_id,
     "PERCENT",
     null,
     percentToSell
@@ -327,6 +340,7 @@ const handleSellTokenAmount = async (
     chatId,
     telegramId,
     message.text,
+    message.message_id,
     "AMOUNT",
     amount
   );
@@ -567,11 +581,11 @@ const handleBackToHome = async (
   const addressLink = `[View Wallet in Explorer](https://solscan.io/account/${address})`;
   const { solUsdPrice } = await UserSolSmartWalletClass.getSolPrice();
 
-  const text = `Welcome to DEBONK! \n\n Here is your Wallet Address \n\n\`${address}\`\nBalance : ${balance}(${formatCurrency(
+  const text = `Welcome to DEBONK! \n\n Here is your Wallet Address \n\n\`${address}\`\nMain Balance : ${balance}(${formatCurrency(
     balance * solUsdPrice
   )})\n ${addressLink}\n\n Simulation Balance : ${user.simulationBalance.toFixed(
     2
-  )}SOL`;
+  )}SOL ($${(Number(user.simulationBalance) * solUsdPrice).toFixed})`;
   try {
     bot.editMessageText(text, {
       reply_markup: { inline_keyboard: INITIAL_INLINE_KEYBOARD },
@@ -591,13 +605,15 @@ const handleExportPrivateKey = async (
 
   const key = getPrivateKeyStingFromTelegramId(telegramId.toString());
 
-  bot.sendMessage(
+  const msg = await bot.sendMessage(
     chatId,
-    `Here is your Wallet Private Key \n\n Tap to Reveal\n||${key}||\n  _DO NOT SHARE WITH ANYONE_`,
+    `Here is your Wallet Private Key \n\n Tap to Reveal\n||${key}||\n_DO NOT SHARE WITH ANYONE_\n\nYou can import the key into a wallet like Solflare\nThis message will auto delete in 1 minute, If not, delete this message once you are done`,
     {
       parse_mode: "MarkdownV2",
     }
   );
+  await new Promise((r) => setTimeout(r, 60000));
+  await bot.deleteMessage(chatId, msg.message_id);
 };
 
 const handleShowUserWalletDetails = async (

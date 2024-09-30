@@ -1,4 +1,4 @@
-import { SOLANA_ERROR_CODES } from "../constants";
+import { APPLICATION_ERROR, SOLANA_ERROR_CODES } from "../constants";
 
 type SolanaErrorType = {
   message: string;
@@ -35,6 +35,20 @@ class TimeStampLessThanLastUpdatedError extends Error {
   }
 }
 
+class TransactionNotConfirmedError extends Error {
+  readonly id: string = APPLICATION_ERROR.TRANSACTION_NOT_CONFIRMED_ERROR;
+  data: { [key: string]: string } | undefined;
+  message = "Transaction not confirmed";
+  name = `TransactionNotConfirmedError`;
+
+  // base constructor only accepts string message as an argument
+  // we extend it here to accept an object, allowing us to pass other data
+  constructor(data: { [key: string]: string }) {
+    super(data.message);
+    this.data = data; // this property is defined in parent
+  }
+}
+
 const getSwapError = (error: any) => {
   if (error) {
     if (
@@ -58,8 +72,13 @@ const getSwapError = (error: any) => {
         name: `TimeStampLessThanLastUpdatedError`,
         data: {},
       });
+    } else if (
+      typeof error === "string" &&
+      error.includes(APPLICATION_ERROR.TRANSACTION_NOT_CONFIRMED_ERROR)
+    ) {
+      return new TransactionNotConfirmedError({});
     }
   }
 };
 
-export { SLippageExceedingError, getSwapError };
+export { SLippageExceedingError, getSwapError, TransactionNotConfirmedError };

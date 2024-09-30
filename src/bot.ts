@@ -8,10 +8,8 @@ import TelegramBot from "node-telegram-bot-api";
 import {
   getPrivateKeyStingFromTelegramId,
   getTokenText,
-
   reFreshPooling,
   replyToAnyhowSentMessage,
- 
   sendUserWalletDetails,
   start,
   toast,
@@ -21,22 +19,20 @@ import { getUserFromTelegramId, prisma } from "./prisma";
 import { queryCallBack, queryCallBackDevBot } from "./keyboardResponses";
 
 import {
- 
   BUY_AND_SELL_KEYBOARD,
   COULD_NOT_GET_TOKEN_DETAILS_TEXT,
- 
   SIMULATION_BUY_AND_SELL_KEYBOARD,
   YOU_ARE_IN_THE_SIMULATION_TEXT,
 } from "./constants";
 
 import { devBot } from "./admin/admin";
 
-import { handleUserBuyPositions } from "./handleKeyboardResponse";
-import { handleUserBuyPositionsSimulation } from "./simulation";
 import {
-  
-  handleShowReferralDetails,
-} from "./referrals/handleKeyboardResponses";
+  handleExportPrivateKey,
+  handleUserBuyPositions,
+} from "./handleKeyboardResponse";
+import { handleUserBuyPositionsSimulation } from "./simulation";
+import { handleShowReferralDetails } from "./referrals/handleKeyboardResponses";
 
 const { BOT_TOKEN } = process.env;
 if (!BOT_TOKEN) {
@@ -191,15 +187,7 @@ bot.onText(/\/key/, async (msg) => {
     const telegramId = msg.from?.id.toString();
     console.log("telegramId: ", telegramId);
 
-    const key = getPrivateKeyStingFromTelegramId(telegramId.toString());
-
-    bot.sendMessage(
-      chatId,
-      `Here is your Wallet Private Key \n\n Tap to Reveal\n||${key}||\n `,
-      {
-        parse_mode: "MarkdownV2",
-      }
-    );
+    await handleExportPrivateKey(chatId.toString(), msg);
   } catch (error) {
     console.log("error: ", error);
     await reFreshPooling();

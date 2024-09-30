@@ -145,11 +145,11 @@ export const start = async (
     const { solUsdPrice } = await UserSolSmartWalletClass.getSolPrice();
     bot.sendMessage(
       chatId,
-      `Welcome to DEBONK! \n\n Here is your Wallet Address \n\n\`${address}\`\nBalance : ${balance}(${formatCurrency(
+      `Welcome to DEBONK! \n\n Here is your Wallet Address \n\n\`${address}\`\nMain Balance : ${balance}(${formatCurrency(
         balance * solUsdPrice
-      )})\n ${addressLink}\n\n Simulation Balance : ${user.simulationBalance.toFixed(
+      )})\n${addressLink}\n\n Simulation Balance : ${user.simulationBalance.toFixed(
         2
-      )}SOL`,
+      )}SOL ($${(Number(user.simulationBalance) * solUsdPrice).toFixed})`,
       {
         reply_markup: { inline_keyboard: INITIAL_INLINE_KEYBOARD },
         parse_mode: "Markdown", // or "HTML" if you're using HTML formatting
@@ -507,7 +507,8 @@ const validateAmountGetTokenAndBuy = async (
   amount: number,
   chatId: string,
   telegramId: string,
-  messageText: string
+  messageText: string,
+  messageId: number
 ) => {
   //validate user balance
 
@@ -529,13 +530,20 @@ const validateAmountGetTokenAndBuy = async (
   }
 
   const tokenAddressMatch = messageText.match(/CA: ([A-Za-z0-9]+)/);
-  const buyMessage = await bot.sendMessage(chatId, `Sending Transaction...`);
+  await bot.editMessageText(`${messageText}\n\n🟠Sending Transaction...`, {
+    parse_mode: "Markdown",
+    disable_web_page_preview: true,
+    chat_id: chatId,
+    message_id: messageId,
+  });
+
   if (tokenAddressMatch && tokenAddressMatch[1]) {
     const tokenAddress = tokenAddressMatch[1];
 
     const res = await doUserBuyToken(tokenAddress, amount, telegramId, chatId);
     if (!res.status) {
-      bot.sendMessage(chatId, "Buy Transaction Failed");
+      bot.sendMessage(chatId, "🚫 Buy Transaction Failed");
+      await sendTokenDetailsByCA(chatId, tokenAddress, telegramId);
       return;
     }
     const solId = res.result as string;
@@ -543,24 +551,30 @@ const validateAmountGetTokenAndBuy = async (
     //   "03145394e11100ad1010cdfff073a0cec81c51699b9ff9390a90ecbf38df5606";
 
     const solLink = `[View Transaction](${solId})`;
+
+    const tokenLink = ``;
     try {
-      bot.editMessageText(`Buy Successful ${solLink}`, {
+      bot.editMessageText(`${messageText}\n\n✅ Buy  Successful ${solLink}`, {
         parse_mode: "Markdown",
         disable_web_page_preview: true,
         chat_id: chatId,
-        message_id: buyMessage.message_id,
+        message_id: messageId,
         reply_markup: {
           inline_keyboard: [
             [
               {
-                text: "Position",
+                text: "📝 Positions",
                 callback_data: KEYBOARD_QUERY.POSITIONS,
               },
             ],
             [
               {
-                text: "Buy Another",
+                text: "💸 Buy Again",
                 callback_data: KEYBOARD_QUERY.BUY,
+              },
+              {
+                text: "💴 Sell",
+                callback_data: KEYBOARD_QUERY.SELL,
               },
             ],
 
@@ -578,6 +592,7 @@ const validateAmountGetTokenAndSell = async (
   chatId: string,
   telegramId: string,
   messageText: string,
+  messageId: number,
   type: "PERCENT" | "AMOUNT",
   amount?: number,
   percentToSell?: PercentRange
@@ -592,7 +607,12 @@ const validateAmountGetTokenAndSell = async (
       toast(chatId, "Please provide a percentage to sell.");
       return;
     }
-    sellMessage = await bot.sendMessage(chatId, `Sending Sell Transaction...`);
+    await bot.editMessageText(`${messageText}\n\nSending Sell Transaction...`, {
+      parse_mode: "Markdown",
+      disable_web_page_preview: true,
+      chat_id: chatId,
+      message_id: messageId,
+    });
     const { result, amountToSell } = await doUserSellTokenPercent(
       tokenAddress,
       percentToSell,
@@ -608,7 +628,12 @@ const validateAmountGetTokenAndSell = async (
       toast(chatId, "Please provide an amount to sell.");
       return;
     }
-    sellMessage = await bot.sendMessage(chatId, `Sending Sell Transaction...`);
+    await bot.editMessageText(`${messageText}\n\nSending Sell Transaction...`, {
+      parse_mode: "Markdown",
+      disable_web_page_preview: true,
+      chat_id: chatId,
+      message_id: messageId,
+    });
     const { result } = await doUserSellTokenSol(
       tokenAddress,
       amount.toString(),
@@ -624,12 +649,15 @@ const validateAmountGetTokenAndSell = async (
   console.log("res: ", res);
   if (res.status == false) {
     try {
-      bot.editMessageText(`Sell Transaction Failed : ${res.message}`, {
-        parse_mode: "Markdown",
-        disable_web_page_preview: true,
-        chat_id: chatId,
-        message_id: sellMessage.message_id,
-      });
+      await bot.sendMessage(
+        chatId,
+        `Sell Transaction Failed : ${res.message}\n Try Again`,
+        {
+          parse_mode: "Markdown",
+          disable_web_page_preview: true,
+        }
+      );
+      await sendTokenDetailsByCA(chatId, tokenAddress, telegramId);
       return;
     } catch (error) {}
   }
@@ -643,7 +671,7 @@ const validateAmountGetTokenAndSell = async (
       parse_mode: "Markdown",
       disable_web_page_preview: true,
       chat_id: chatId,
-      message_id: sellMessage.message_id,
+      message_id: messageId,
       reply_markup: {
         inline_keyboard: [
           [
@@ -778,11 +806,11 @@ const sendUserWalletDetails = async (
   const addressLink = `[View Wallet in Explorer](https://solscan.io/account/${address})`;
   const { solUsdPrice } = await UserSolSmartWalletClass.getSolPrice();
 
-  const text = `Here is your Wallet Address \n\n\`${address}\`\nBalance : ${balance}(${formatCurrency(
+  const text = `Here is your Wallet Address \n\n\`${address}\`\nMain Balance : ${balance}(${formatCurrency(
     balance * solUsdPrice
   )})\n ${addressLink}\n\n Simulation Balance : ${user.simulationBalance.toFixed(
     2
-  )}SOL`;
+  )}SOL ($${(Number(user.simulationBalance) * solUsdPrice).toFixed})`;
 
   const inlineKeys = [
     [

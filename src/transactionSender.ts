@@ -101,7 +101,7 @@ export async function transactionSenderAndConfirmationWaiter({
       return response;
     },
     {
-      retries: 5,
+      retries: 7,
       minTimeout: 1e3,
     }
   );

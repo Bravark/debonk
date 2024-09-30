@@ -83,6 +83,7 @@ export const handleGetReferralProfits = async (
 ) => {
   const telegramId = message.chat.id.toString();
   const profit = await getReferralProfit(telegramId);
+  const user = await getUserFromTelegramId(telegramId);
   if (!profit) {
     console.log(
       "Could Not Find Referral Profit: No referral found for the user"
@@ -97,7 +98,11 @@ export const handleGetReferralProfits = async (
 
   return bot.sendMessage(
     chatId.toString(),
-    `Referral Profit : ${profit} SOL ($${usdValue})`,
+    `Referral Profit : ${profit.toFixed(6)} SOL ($${usdValue.toFixed(
+      3
+    )})\n\nDirect Referral : ${user.referralCountDirect}\nTotal Referral : ${
+      user.referralCountIndirect
+    }`,
     {
       reply_markup: {
         inline_keyboard: [

@@ -49,7 +49,8 @@ export const validateAmountGetTokenAndBuySimulation = async (
   amount: number,
   chatId: string,
   telegramId: string,
-  messageText: string
+  messageText: string,
+  messageId: number
 ) => {
   //validate user balance
 
@@ -68,9 +69,8 @@ export const validateAmountGetTokenAndBuySimulation = async (
   if (tokenAddressMatch && tokenAddressMatch[1]) {
     const tokenAddress = tokenAddressMatch[1];
 
-    bot.sendMessage(
-      chatId,
-      `${YOU_ARE_IN_THE_SIMULATION_TEXT} Simulation Buy Successful `,
+    bot.editMessageText(
+      `${YOU_ARE_IN_THE_SIMULATION_TEXT} ${messageText}\n\n✅ Simulation Buy Successful `,
       {
         parse_mode: "Markdown",
         disable_web_page_preview: true,
@@ -91,6 +91,8 @@ export const validateAmountGetTokenAndBuySimulation = async (
             BACK_BUTTON,
           ],
         },
+        chat_id: chatId,
+        message_id: messageId,
       }
     );
     await completeBuyActionSimulation(telegramId, tokenAddress, amount);
@@ -168,7 +170,8 @@ export const handleSimulationBuyTokenAmount = async (
     amount,
     chatId,
     telegramId,
-    message.text
+    message.text,
+    message.message_id
   );
 };
 

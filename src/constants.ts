@@ -460,6 +460,7 @@ export const SOLANA_ERROR_CODES = {
 };
 export const APPLICATION_ERROR = {
   JUPITER_SWAP_ERROR: "quote_swap_error",
+  TRANSACTION_NOT_CONFIRMED_ERROR: "transaction_not_confirmed",
 };
 
 export const BUY_AND_SELL_KEYBOARD = [

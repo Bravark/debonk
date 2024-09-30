@@ -57,7 +57,11 @@ import { transactionSenderAndConfirmationWaiter } from "./transactionSender";
 import { publicKey } from "@project-serum/anchor/dist/cjs/utils";
 import { creditReferral } from "./referrals/referrals";
 import { triggerAsyncId } from "async_hooks";
-import { getSwapError, SLippageExceedingError } from "./errors/solanaError";
+import {
+  getSwapError,
+  SLippageExceedingError,
+  TransactionNotConfirmedError,
+} from "./errors/solanaError";
 
 const jupiterQuoteApi = createJupiterApiClient();
 
@@ -177,7 +181,7 @@ export class MasterSolSmartWalletClass {
       console.error("Transaction not confirmed");
       //!WE SHOULD RETRY THE TRANSACTION AGAIN HERE
 
-      return { error: "transaction_not_confirmed" };
+      throw new TransactionNotConfirmedError({});
     }
 
     if (transactionResponse.meta?.err) {
@@ -853,6 +857,7 @@ export class UserSolSmartWalletClass {
     if (!status) {
       //check what type of error it is
       const error_ = await getSwapError(error);
+
       throw error_;
     }
     return explorerUrl;
@@ -882,6 +887,15 @@ export class UserSolSmartWalletClass {
       );
       status = true;
     } catch (error) {
+      if (error instanceof TransactionNotConfirmedError) {
+        result = await this._swap(
+          params.token,
+          params.amountInSol,
+          "BUY",
+          params.slippage
+        );
+      }
+
       if (error instanceof SLippageExceedingError) {
         throw error;
       }
@@ -901,6 +915,8 @@ export class UserSolSmartWalletClass {
     let status = false;
     let result: unknown;
     let feesAmount = 0;
+    const maxRetry = 3;
+    let count = 0;
     try {
       const { tokenUsdPrice, tokenSolPrice } = await this.getTokenPrice(
         params.token
@@ -927,38 +943,49 @@ export class UserSolSmartWalletClass {
         throw new Error("Invalid params.");
       }
       console.log("amountToSell: ", amountToSell);
-
-      result = await this._swap(
-        params.token,
-        amountToSell,
-        "SELL",
-        params.slippage
-      );
-
-      // we collect our fees here
-      console.log("feesAmount: ", feesAmount);
       try {
-        // i want to wait for 30 seconds before running this part
-        //???I HAVE tried using jupiter to collect the fees
-        new Promise((resolve) =>
-          setTimeout(() => {
-            this.withdrawSol(feesAmount, DEV_SOL_WALLET).then((result) => {
-              console.log("Fees Deducted Successfully: ", result);
-              if (result) {
-                creditReferral(this.userAddress, feesAmount).then((result) => {
-                  console.log("Referral Credited Successfully: ", result);
-                });
-              }
-
-              //we will just assume that the the result is success and we will credit the referrals here.
-            });
-          }, 10000)
+        result = await this._swap(
+          params.token,
+          amountToSell,
+          "SELL",
+          params.slippage
         );
-      } catch (error) {
-        console.log("error with collecting fees: ", error);
-      }
 
-      status = true;
+        // we collect our fees here
+        console.log("feesAmount: ", feesAmount);
+        try {
+          // i want to wait for 30 seconds before running this part
+          //???I HAVE tried using jupiter to collect the fees
+          new Promise((resolve) =>
+            setTimeout(() => {
+              this.withdrawSol(feesAmount, DEV_SOL_WALLET).then((result) => {
+                console.log("Fees Deducted Successfully: ", result);
+                if (result) {
+                  creditReferral(this.userAddress, feesAmount).then(
+                    (result) => {
+                      console.log("Referral Credited Successfully: ", result);
+                    }
+                  );
+                }
+
+                //we will just assume that the the result is success and we will credit the referrals here.
+              });
+            }, 10000)
+          );
+        } catch (error) {
+          console.log("error with collecting fees: ", error);
+        }
+
+        status = true;
+      } catch (error) {
+        if (error instanceof TransactionNotConfirmedError) {
+          //we want to retry transaction not confirmed error
+          //let us just try it one more time
+          console.log("retrying transaction not confirmed error: ");
+          await this._swap(params.token, amountToSell, "SELL", params.slippage);
+          count++;
+        }
+      }
     } catch (error) {
       if (error instanceof SLippageExceedingError) {
         throw error;
@@ -966,6 +993,7 @@ export class UserSolSmartWalletClass {
       if (error.message === APPLICATION_ERROR.JUPITER_SWAP_ERROR) {
         throw error;
       }
+
       console.log("error: ", error);
       console.log("error: ", error);
     }

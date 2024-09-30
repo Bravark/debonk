@@ -57,7 +57,7 @@ const handleBridge = async (
     chatId,
     `You will get ${estimatedAmount}${to.toUpperCase()}`
   );
-  //i have the 1,
+
   // depending on the route( reverse or not) we will
   // - normal(from other chain to sol)
   //      we get the users sol wallet address, this will be the destination address
@@ -101,8 +101,8 @@ const handleInitBridge = async (
       BACK_BUTTON,
     ],
   };
-  //   toast(chatId, `Coming soon...`, 10);
-  //   return;
+  toast(chatId, `Coming soon...`, 10);
+  return;
   await bot.editMessageReplyMarkup(replyMarkUp, {
     chat_id: chatId,
     message_id: message.message_id,
