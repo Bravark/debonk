@@ -180,7 +180,8 @@ const handleBuyTokenAmount = async (
     chatId,
     telegramId,
     message.text,
-    message.message_id
+    message.message_id,
+    message
   );
 };
 
@@ -206,7 +207,8 @@ const handleBuyTokenCustomAmount = async (
     chatId,
     telegramId,
     message.text,
-    message.message_id
+    message.message_id,
+    message
   );
 };
 const handleUpdateSendTokenDetailsByCA = async (
@@ -314,6 +316,7 @@ const handleSellTokenPercent = async (
     telegramId,
     message.text,
     message.message_id,
+    message,
     "PERCENT",
     null,
     percentToSell
@@ -341,6 +344,7 @@ const handleSellTokenAmount = async (
     telegramId,
     message.text,
     message.message_id,
+    message,
     "AMOUNT",
     amount
   );

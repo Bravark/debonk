@@ -506,7 +506,8 @@ const validateAmountGetTokenAndBuy = async (
   chatId: string,
   telegramId: string,
   messageText: string,
-  messageId: number
+  messageId: number,
+  message: TelegramBot.Message
 ) => {
   //validate user balance
 
@@ -533,6 +534,7 @@ const validateAmountGetTokenAndBuy = async (
     disable_web_page_preview: true,
     chat_id: chatId,
     message_id: messageId,
+    reply_markup: message.reply_markup,
   });
 
   if (tokenAddressMatch && tokenAddressMatch[1]) {
@@ -557,28 +559,7 @@ const validateAmountGetTokenAndBuy = async (
         disable_web_page_preview: true,
         chat_id: chatId,
         message_id: messageId,
-        reply_markup: {
-          inline_keyboard: [
-            [
-              {
-                text: "📝 Positions",
-                callback_data: KEYBOARD_QUERY.POSITIONS,
-              },
-            ],
-            [
-              {
-                text: "💸 Buy Again",
-                callback_data: KEYBOARD_QUERY.BUY,
-              },
-              {
-                text: "💴 Sell",
-                callback_data: KEYBOARD_QUERY.SELL,
-              },
-            ],
-
-            BACK_BUTTON,
-          ],
-        },
+        reply_markup: message.reply_markup,
       });
     } catch (error) {}
     await completeBuyAction(telegramId, tokenAddress, amount, solId);
@@ -591,6 +572,7 @@ const validateAmountGetTokenAndSell = async (
   telegramId: string,
   messageText: string,
   messageId: number,
+  message: TelegramBot.Message,
   type: "PERCENT" | "AMOUNT",
   amount?: number,
   percentToSell?: PercentRange
@@ -610,6 +592,7 @@ const validateAmountGetTokenAndSell = async (
       disable_web_page_preview: true,
       chat_id: chatId,
       message_id: messageId,
+      reply_markup: message.reply_markup,
     });
     const { result, amountToSell } = await doUserSellTokenPercent(
       tokenAddress,
@@ -631,6 +614,7 @@ const validateAmountGetTokenAndSell = async (
       disable_web_page_preview: true,
       chat_id: chatId,
       message_id: messageId,
+      reply_markup: message.reply_markup,
     });
     const { result } = await doUserSellTokenSol(
       tokenAddress,
@@ -670,23 +654,7 @@ const validateAmountGetTokenAndSell = async (
       disable_web_page_preview: true,
       chat_id: chatId,
       message_id: messageId,
-      reply_markup: {
-        inline_keyboard: [
-          [
-            {
-              text: "View Position",
-              callback_data: KEYBOARD_QUERY.POSITIONS,
-            },
-          ],
-          [
-            {
-              text: "Buy",
-              callback_data: KEYBOARD_QUERY.BUY,
-            },
-          ],
-          BACK_BUTTON,
-        ],
-      },
+      reply_markup: message.reply_markup,
     });
   } catch (error) {}
   const user = await getUserFromTelegramId(telegramId);

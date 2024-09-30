@@ -50,7 +50,8 @@ export const validateAmountGetTokenAndBuySimulation = async (
   chatId: string,
   telegramId: string,
   messageText: string,
-  messageId: number
+  messageId: number,
+  message: TelegramBot.Message
 ) => {
   //validate user balance
 
@@ -74,23 +75,7 @@ export const validateAmountGetTokenAndBuySimulation = async (
       {
         parse_mode: "Markdown",
         disable_web_page_preview: true,
-        reply_markup: {
-          inline_keyboard: [
-            [
-              {
-                text: "🧪📝 View Simulation Position",
-                callback_data: KEYBOARD_QUERY.S_POSITIONS,
-              },
-            ],
-            [
-              {
-                text: "🧪💸 Simulation Buy",
-                callback_data: KEYBOARD_QUERY.S_BUY,
-              },
-            ],
-            BACK_BUTTON,
-          ],
-        },
+        reply_markup: message.reply_markup,
         chat_id: chatId,
         message_id: messageId,
       }
@@ -171,7 +156,8 @@ export const handleSimulationBuyTokenAmount = async (
     chatId,
     telegramId,
     message.text,
-    message.message_id
+    message.message_id,
+    message
   );
 };
 
@@ -466,6 +452,7 @@ export const handleSellTokenPercentSimulation = async (
     chatId,
     telegramId,
     message.text,
+    message,
     "PERCENT",
     null,
     percentToSell
@@ -476,6 +463,7 @@ const validateAmountGetTokenAndSellSimulation = async (
   chatId: string,
   telegramId: string,
   messageText: string,
+  message: TelegramBot.Message,
   type: "PERCENT" | "AMOUNT",
   amount?: number,
   percentToSell?: PercentRange
@@ -527,23 +515,7 @@ const validateAmountGetTokenAndSellSimulation = async (
     chatId,
     `${YOU_ARE_IN_THE_SIMULATION_TEXT}\nSimulation Sell Successful `,
     {
-      reply_markup: {
-        inline_keyboard: [
-          [
-            ...BACK_BUTTON,
-            {
-              text: "💳 Wallet",
-              callback_data: KEYBOARD_QUERY.SHOW_WALLET,
-            },
-          ],
-          [
-            {
-              text: "📝Active Positions",
-              callback_data: KEYBOARD_QUERY.S_POSITIONS,
-            },
-          ],
-        ],
-      },
+      reply_markup: message.reply_markup,
       parse_mode: "Markdown",
       disable_web_page_preview: true,
     }

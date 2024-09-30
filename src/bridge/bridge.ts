@@ -1,8 +1,16 @@
 import TelegramBot from "node-telegram-bot-api";
 import { SwapParams } from "./types";
-import { estimateExchangeAmount, getRange } from "./changeNow";
+import {
+  createTransaction,
+  estimateExchangeAmount,
+  getRange,
+} from "./changeNow";
 import { bot, colletTextFromUser, toast } from "../helper";
-import { numberValidator, standardizeNetwork } from "../utils";
+import {
+  numberValidator,
+  standardizeNetwork,
+  standardizeToken,
+} from "../utils";
 import { BACK_BUTTON, KEYBOARD_QUERY } from "../constants";
 
 const bridgeTokens = () => {};
@@ -73,17 +81,23 @@ const handleBridge = async (
   //At this stage either the normal or reverse has seen the transaction now, it is to confirm it and report to the user.
 };
 
-// const doBridge = async (params) => {
-//   const swapResponse = await createTransaction({
-//     fromCurrency: standardizeToken(fromCurrency),
-//     toCurrency: standardizeToken(toCurrency),
-//     fromAmount: fromAmount,
-//     address: address,
-//     fromNetwork: standardizeNetwork(fromNetwork),
-//     toNetwork: standardizeNetwork(toNetwork),
-//     flow: "standard",
-//   });
-// };
+const doBridge = async (
+  params: SwapParams,
+  address: string,
+  type: "NORMAL" | "REVERSE"
+) => {
+  const swapResponse = await createTransaction({
+    fromCurrency: standardizeToken(params.fromCurrency),
+    toCurrency: standardizeToken(params.toCurrency),
+    fromAmount: params.fromAmount,
+    address: address,
+    fromNetwork: standardizeNetwork(params.fromNetwork),
+    toNetwork: standardizeNetwork(params.toNetwork),
+    flow: "standard",
+  });
+
+  swapResponse;
+};
 
 const handleInitBridge = async (
   chatId: string,
