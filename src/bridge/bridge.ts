@@ -368,10 +368,10 @@ const handleInitBridge = async (
     ],
   };
 
-  if (process.env.ENV === "production") {
-    toast(chatId, `Coming soon...`, 10);
-    return;
-  }
+  //   if (process.env.ENV === "production") {
+  //     toast(chatId, `Coming soon...`, 10);
+  //     return;
+  //   }
   await bot.editMessageReplyMarkup(replyMarkUp, {
     chat_id: chatId,
     message_id: message.message_id,
