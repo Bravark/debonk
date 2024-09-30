@@ -70,16 +70,13 @@ export const validateAmountGetTokenAndBuySimulation = async (
   if (tokenAddressMatch && tokenAddressMatch[1]) {
     const tokenAddress = tokenAddressMatch[1];
 
-    bot.editMessageText(
-      `${YOU_ARE_IN_THE_SIMULATION_TEXT} ${messageText}\n\n✅ Simulation Buy Successful `,
-      {
-        parse_mode: "Markdown",
-        disable_web_page_preview: true,
-        reply_markup: message.reply_markup,
-        chat_id: chatId,
-        message_id: messageId,
-      }
-    );
+    bot.editMessageText(`${messageText}\n\n✅ Simulation Buy Successful `, {
+      parse_mode: "Markdown",
+      disable_web_page_preview: true,
+      reply_markup: message.reply_markup,
+      chat_id: chatId,
+      message_id: messageId,
+    });
     await completeBuyActionSimulation(telegramId, tokenAddress, amount);
   } else {
     console.error("Token Address not found in the message");
@@ -511,15 +508,13 @@ const validateAmountGetTokenAndSellSimulation = async (
   console.log("res: ", res);
   solId = res;
 
-  bot.sendMessage(
-    chatId,
-    `${YOU_ARE_IN_THE_SIMULATION_TEXT}\nSimulation Sell Successful `,
-    {
-      reply_markup: message.reply_markup,
-      parse_mode: "Markdown",
-      disable_web_page_preview: true,
-    }
-  );
+  bot.editMessageText(`${messageText}\n\n✅ Simulation Sell Successful `, {
+    reply_markup: message.reply_markup,
+    parse_mode: "Markdown",
+    disable_web_page_preview: true,
+    chat_id: chatId,
+    message_id: message.message_id,
+  });
 
   const wallet = user.wallet.filter((wallet: Wallet) => wallet.isPrimary)[0];
   //if wallet does not exist, create it

@@ -13,6 +13,9 @@ import {
 } from "../utils";
 import { BACK_BUTTON, KEYBOARD_QUERY } from "../constants";
 
+// add dotenv
+require("dotenv").config();
+
 const bridgeTokens = () => {};
 
 const processBridge = async (params: SwapParams) => {};
@@ -84,19 +87,29 @@ const handleBridge = async (
 const doBridge = async (
   params: SwapParams,
   address: string,
-  type: "NORMAL" | "REVERSE"
+  estimatedAmountOut: number,
+  type: "NORMAL" | "REVERSE",
+  chatId: string
 ) => {
-  const swapResponse = await createTransaction({
-    fromCurrency: standardizeToken(params.fromCurrency),
-    toCurrency: standardizeToken(params.toCurrency),
-    fromAmount: params.fromAmount,
-    address: address,
-    fromNetwork: standardizeNetwork(params.fromNetwork),
-    toNetwork: standardizeNetwork(params.toNetwork),
-    flow: "standard",
-  });
+  if (type == "NORMAL") {
+    const swapResponse = await createTransaction({
+      fromCurrency: standardizeToken(params.fromCurrency),
+      toCurrency: standardizeToken(params.toCurrency),
+      fromAmount: params.fromAmount,
+      address: address,
+      fromNetwork: standardizeNetwork(params.fromNetwork),
+      toNetwork: standardizeNetwork(params.toNetwork),
+      flow: "standard",
+    });
 
-  swapResponse;
+    swapResponse;
+
+    const swapMes = await bot.sendMessage(
+      chatId,
+      `Waiting for deposit.\n\nSwapping ${params.fromAmount} of ${params.fromCurrency} (${params.fromNetwork}) to ${estimatedAmountOut} ${params.toCurrency} (${params.toNetwork}) to wallet address: \n${address}.\n\nHere is the deposit Address:\n\`${swapResponse?.data?.payinAddress}\``,
+      { parse_mode: "Markdown" }
+    );
+  }
 };
 
 const handleInitBridge = async (
@@ -128,8 +141,11 @@ const handleInitBridge = async (
       BACK_BUTTON,
     ],
   };
-  toast(chatId, `Coming soon...`, 10);
-  return;
+
+  if (process.env.ENV === "production") {
+    toast(chatId, `Coming soon...`, 10);
+    return;
+  }
   await bot.editMessageReplyMarkup(replyMarkUp, {
     chat_id: chatId,
     message_id: message.message_id,
