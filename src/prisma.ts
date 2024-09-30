@@ -1,4 +1,5 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient, Swap } from "@prisma/client";
+import { SwapData } from "./bridge/types";
 
 const prisma = new PrismaClient();
 
@@ -538,6 +539,34 @@ export const getReferralProfit = async (telegramId: string) => {
     });
 
     return profit?.referralProfit;
+  } catch (error) {
+    console.log("error: ", error);
+  }
+};
+
+export const addSwapDataToDb = async (data: SwapData) => {
+  // Implement the logic to store the swap data in your database
+
+  try {
+    await prisma.swap.create({
+      data,
+    });
+  } catch (error) {
+    console.log("error: ", error);
+  }
+};
+
+export const getSwapDataDb = async (messageId: string, chatId: string) => {
+  // Implement the logic to store the swap data in your database
+
+  try {
+    const res = await prisma.swap.findUnique({
+      where: { swapMessageId: messageId, chatId },
+    });
+    if (!res) {
+      return null;
+    }
+    return res as Swap;
   } catch (error) {
     console.log("error: ", error);
   }

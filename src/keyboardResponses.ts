@@ -40,7 +40,7 @@ import {
   handleShowReferralDetails,
   handleWithdrawProfits,
 } from "./referrals/handleKeyboardResponses";
-import { handleInitBridge } from "./bridge/bridge";
+import { handleBridge, handleInitBridge } from "./bridge/bridge";
 
 export const queryCallBack = async (
   callbackQuery: TelegramBot.CallbackQuery
@@ -458,15 +458,25 @@ export const queryCallBack = async (
     default:
       bot.answerCallbackQuery(callbackQuery.id, { text: "Unknown action." });
   }
+  try {
+    if (data.includes("s_sell-tokes")) {
+      const token = data.split(":")[1];
+      await sendSellTokenMessage(token, message, chatId.toString(), true);
+    }
 
-  if (data.includes("s_sell-tokes")) {
-    const token = data.split(":")[1];
-    await sendSellTokenMessage(token, message, chatId.toString(), true);
-  }
+    if (data.includes("sell-token")) {
+      const token = data.split(":")[1];
+      await sendSellTokenMessage(token, message, chatId.toString());
+    }
 
-  if (data.includes("sell-token")) {
-    const token = data.split(":")[1];
-    await sendSellTokenMessage(token, message, chatId.toString());
+    //BRIDGE COMMANDS
+    if (data.startsWith("bridge_")) {
+      const data_ = data.split(":")[1];
+      await handleBridge(chatId.toString(), message, data_);
+    }
+  } catch (error) {
+    console.log("error: ", error);
+    toast(chatId.toString(), "An error occurred: ");
   }
 };
 

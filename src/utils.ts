@@ -62,6 +62,12 @@ export const numberValidator: Validator<number> = async (value) => {
   return true;
 };
 
+export const stringValidator: Validator<string> = async (value) => {
+  //?don't now how to validate string
+
+  return true;
+};
+
 export const numberValidatorOptionalNone: Validator<number> = async (
   value: number
 ) => {

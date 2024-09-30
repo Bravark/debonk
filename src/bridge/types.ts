@@ -1,3 +1,5 @@
+import { Prisma } from "@prisma/client";
+
 export const TransactionStatus = {
   NEW: "new",
   WAITING: "waiting",
@@ -114,3 +116,7 @@ export interface SwapStatusResponse {
   relatedExchangesInfo: any[]; // Assuming array of any type, can be more specific if known
   repeatedExchangesInfo: any[]; // Assuming array of any type, can be more specific if known
 }
+
+//BRIDGE
+
+export interface SwapData extends Prisma.SwapUncheckedCreateInput {}

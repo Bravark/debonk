@@ -25,6 +25,8 @@ model User {
 
   referralProfit Float @default(0.0000)
   referralCashOut referralCashOut[]
+
+  swaps       Swap[]
   
 
   metadata        String?
@@ -133,6 +135,30 @@ model referralCashOut {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 }
+
+model Swap {
+  id             Int      @id @default(autoincrement())
+  status         String
+  telegramId     String
+  chatId         String
+  swapMessageId String @unique
+
+  fromCurrency   String?
+  toCurrency     String?
+  fromAmount     String?
+  toAmount        String?
+  fromNetwork String?
+  toNetwork     String?
+
+  user           User     @relation(fields: [telegramId], references: [telegramId])
+ 
+  transactionId  String? @unique
+
+  metadata        String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
 
 
 

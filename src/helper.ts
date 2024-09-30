@@ -249,10 +249,13 @@ const colletTextFromUser = <T>(
       if (text) {
         field = text;
         // Resolve the promise with the user input
-        const msg2 = await _bot.sendMessage(
-          chatId.toString(),
-          `${successText}:  ${field}`
-        );
+        let msg2: TelegramBot.Message;
+        if (successText) {
+          msg2 = await _bot.sendMessage(
+            chatId.toString(),
+            `${successText}:  ${field}`
+          );
+        }
         _bot.removeListener("message", collectDetailsCallback);
         _bot.addListener(`text`, replyToAnyhowSentMessage);
 

@@ -103,25 +103,50 @@ export const KEYBOARD_QUERY = {
   SHOW_REFERRAL_DETAILS: "show_referred_details",
 
   BRIDGE_ROUTE: {
-    SOL: {
-      TEXT: "Sol -> Sol",
-      QUERY: "sol_to_sol",
-    },
     SOL_R: {
-      TEXT: "Sol -> Sol",
-      QUERY: "sol_to_sol",
+      TEXT: "SOL -> BNB",
+      QUERY: "bridge_:sol_to_bnb",
     },
-    ETH: {
-      TEXT: "Eth -> Sol",
-      QUERY: "eth_to_sol",
+    SOL: {
+      TEXT: "BNB -> SOL",
+      QUERY: "bridge_:bnb_to_sol",
     },
     ETH_R: {
-      TEXT: "Sol ->Eth",
-      QUERY: "eth_to_sol",
+      TEXT: "SOL -> ETH",
+      QUERY: "bridge_:sol_to_eth",
+    },
+    ETH: {
+      TEXT: "ETH -> SOL",
+      QUERY: "bridge_:eth_to_sol",
     },
   },
 
   CLEAR_LISTENERS: "clear_listeners",
+};
+
+export const TransactionStatus = {
+  NEW: "new",
+  WAITING: "waiting",
+  CONFIRMING: "confirming",
+  EXCHANGING: "exchanging",
+  SENDING: "sending",
+  FINISHED: "finished",
+  FAILED: "failed",
+  REFUNDED: "refunded",
+  VERIFYING: "verifying",
+  CANCELLED: "cancelled",
+} as const;
+
+export const STATUS_EMOJI = {
+  NEW: "⚪",
+  WAITING: "🕔",
+  CONFIRMING: "🟠",
+  EXCHANGING: "🔄",
+  SENDING: "🟢",
+  FINISHED: "✅",
+  FAILED: "⛔",
+  REFUNDED: "���",
+  VERIFYING: "🟡",
 };
 
 export interface Validator<T> {
@@ -395,6 +420,7 @@ export const NETWORK_MAP: { [key: string]: string } = {
   litecoin: "ltc",
   tron: "sol",
   trc20: "sol",
+  bnb: "bsc",
 
   // Add more mappings as needed
 };
@@ -518,6 +544,7 @@ export const TOKEN_MAP: { [key: string]: string } = {
   litecoin: "ltc",
   tron: "trx",
   trc20: "trx",
+  bsc: "bnb",
 
   // Add more mappings as needed
 };
