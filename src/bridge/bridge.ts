@@ -22,6 +22,7 @@ const handleBridge = async (
     toCurrency: to!,
     toNetwork: standardizeNetwork(to),
   });
+  //
   const minAmount = res.data.minAmount;
   bot.sendMessage(
     chatId,
