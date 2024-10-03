@@ -98,7 +98,7 @@ export const handleGetReferralProfits = async (
 
   return bot.sendMessage(
     chatId.toString(),
-    `Referral Profit : ${profit.toFixed(6)} SOL ($${usdValue.toFixed(
+    `Your Referral Profit : ${profit.toFixed(6)} SOL ($${usdValue.toFixed(
       3
     )})\n\nDirect Referral : ${user.referralCountDirect}\nTotal Referral : ${
       user.referralCountIndirect
