@@ -49,14 +49,12 @@ import {
   isSellTokenInSolParams,
 } from "./types";
 import * as jup from "@jup-ag/api";
-import { DIV } from "./constants";
 const bip32 = BIP32Factory(ecc);
 
 import { createJupiterApiClient, QuoteResponse } from "@jup-ag/api";
 import { transactionSenderAndConfirmationWaiter } from "./transactionSender";
-import { publicKey } from "@project-serum/anchor/dist/cjs/utils";
 import { creditReferral } from "./referrals/referrals";
-import { triggerAsyncId } from "async_hooks";
+
 import {
   getSwapError,
   SLippageExceedingError,
