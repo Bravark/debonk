@@ -88,7 +88,13 @@ export const handleGetReferralProfits = async (
     console.log(
       "Could Not Find Referral Profit: No referral found for the user"
     );
-    return bot.sendMessage(chatId.toString(), `Referral Profit : 0 SOL`);
+    return bot.sendMessage(
+      chatId.toString(),
+      `Referral Profit : 0 SOL \n\nDirect Referral : ${user.referralCountDirect}\nTotal Referral : ${user.referralCountIndirect}`,
+      {
+        parse_mode: "Markdown",
+      }
+    );
   }
 
   //convert thr profit in btc to usd
