@@ -68,13 +68,13 @@ export async function generatePNLCard(pnlData: PNLData) {
       ];
   }
   console.log("backgroundImagePath: ", backgroundImagePath);
-  // const backgroundImg = await loadImage(`./pnl-images/${backgroundImagePath}`);
+
   const backgroundImagePathx = path.resolve(
     __dirname,
-    `./pnl-images/${backgroundImagePath}`
+    `../public/pnl-images/${backgroundImagePath}`
   );
   const backgroundImg = await loadImage(backgroundImagePathx);
-  const debonkLogoPath = path.resolve(__dirname, "./debonklogo.png");
+  const debonkLogoPath = path.resolve(__dirname, "../public/debonklogo.png");
   const debonkLogo = await loadImage(debonkLogoPath);
 
   // Calculate aspect ratio and position for proper scaling

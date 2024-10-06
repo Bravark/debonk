@@ -63,7 +63,7 @@ const collectTokenText = async (
   chatId: string,
   message: TelegramBot.Message
 ) => {
-  const tokenAddressMatch = message.text.match(/CA: ([A-Za-z0-9]+)/);
+  const tokenAddressMatch = message.text?.match(/CA: ([A-Za-z0-9]+)/);
   let token: string;
   if (
     tokenAddressMatch &&
@@ -80,7 +80,7 @@ const collectTokenText = async (
       solAddressValidator
     );
 
-    token = getContractAddressFromTextOrLink(xtoken);
+    token = getContractAddressFromTextOrLink(xtoken)!;
   }
 
   const telegramId = message.chat.id;
