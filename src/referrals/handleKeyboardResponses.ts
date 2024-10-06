@@ -96,6 +96,10 @@ export const handleGetReferralProfits = async (
   const solPrice = await getSolPrice();
   const usdValue = profit * solPrice;
 
+  console.log(
+    "THIS IS THE NEW ADDITION TO THE FILE, THIS SHOULD LOG IN PRODUCTION, 9THIS IS DEBUG0"
+  );
+
   return bot.sendMessage(
     chatId.toString(),
     `Your Referral Profit : ${profit.toFixed(6)} SOL ($${usdValue.toFixed(

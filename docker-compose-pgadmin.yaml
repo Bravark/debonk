@@ -1,1 +1,13 @@
 services:
+  debonk-stage-db:
+    image: postgres:15
+    restart: always
+    container_name: debonk-testdb
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data/test
+    ports:
+      - 5437:5433
+    environment:
+      POSTGRES_USER: testdbdb
+      POSTGRES_PASSWORD: 8976857
+      POSTGRES_DB: nest
