@@ -5,7 +5,11 @@ import {
   MasterSolSmartWalletClass,
   UserSolSmartWalletClass,
 } from "./solana-provider";
-import { deriveUserIndex, getContractAddressFromTextOrLink } from "./utils";
+import {
+  deriveUserIndex,
+  formatter,
+  getContractAddressFromTextOrLink,
+} from "./utils";
 
 import {
   BuyTokenParams,
@@ -21,6 +25,7 @@ import {
 import {
   APPLICATION_ERROR,
   BACK_BUTTON,
+  BOT_USERNAME,
   BUY_AND_SELL_KEYBOARD,
   COLLECT_BUY_AMOUNT_INLINE_KEYBOARD,
   COLLECT_SELL_AMOUNT_INLINE_KEYBOARD,
@@ -34,7 +39,9 @@ import {
 } from "./constants";
 import numeral from "numeral";
 import {
+  calculateProfitLoss,
   getBuyTransaction,
+  getPositionFromId,
   getUserById,
   getUserFromTelegramId,
   getUserFromWalletAddress,
@@ -44,7 +51,7 @@ import {
   updatePositionOnBuy,
   updatePositionOnSell,
 } from "./prisma";
-import { Wallet } from "@prisma/client";
+import { Position, Wallet } from "@prisma/client";
 
 import customAddressValidator from "./address-validator/wallet_address_validator";
 
@@ -57,6 +64,7 @@ import {
 } from "./dataService";
 import { bs58 } from "@project-serum/anchor/dist/cjs/utils/bytes";
 import { SLippageExceedingError } from "./errors/solanaError";
+import { generatePNLCard } from "./pnlCard";
 
 // add dotenv
 require("dotenv").config();
@@ -399,9 +407,11 @@ const getTokenText = async (
       (position) =>
         position.isSimulation == true && position.tokenAddress === _token
     );
+    const wallet = user.wallet.filter((wallet: Wallet) => wallet.isPrimary)[0];
 
     const simulationTokenBalance = Number(position?.amountHeld);
     console.log("simulationTokenBalance: ", simulationTokenBalance);
+    //FOR POSITIONS
 
     const userTokenBalance = isSim
       ? simulationTokenBalance
@@ -428,9 +438,63 @@ const getTokenText = async (
     text += `Your Sol Balance: ${userBalance}(${formatCurrency(
       userBalance * solUsdPrice
     )})\n ${userAddress}`;
+    if (position) {
+      const PNL_usd = await calculateProfitLoss(
+        user.id,
+        wallet.id,
+        position.tokenAddress,
+        token.priceUsd.toString()
+      );
+      const PNL_sol = PNL_usd / solUsdPrice;
+      const PNL_Sol_percent = (
+        (PNL_sol /
+          (parseInt(position.amountHeld) * parseFloat(position.avgBuyPrice))) *
+        solUsdPrice *
+        100
+      ).toFixed(2);
+
+      const balance = await getUserTokenBalance(
+        position.tokenAddress,
+        telegramId
+      );
+      const _balance = formatter({
+        decimal: 5,
+      }).format(balance);
+
+      const currentPrice = formatter({
+        decimal: 8,
+      }).format(Number(token.priceUsd.toString()));
+
+      const ch = `${formatCurrencyWithoutDollarSign(
+        balance * Number(token.priceNative)
+      )} SOL (${formatCurrency(balance * token.priceUsd)})`;
+
+      const PNL_usd_percent = (
+        (PNL_usd /
+          (parseInt(position.amountHeld) * parseFloat(position.avgBuyPrice))) *
+        100
+      ).toFixed(2);
+      text += `\n\nPosition\n`;
+      text += `  |-Capital: ${(
+        (parseFloat(position.avgBuyPrice) * parseFloat(position.amountHeld)) /
+        solUsdPrice
+      ).toFixed(2)} Sol ($${(
+        parseFloat(position.avgBuyPrice) * parseFloat(position.amountHeld)
+      ).toFixed(2)})\n`;
+      text += `  |-Current value: ${ch}\n`;
+      text += `  |-PNL USD: ${PNL_usd_percent}% ($${PNL_usd.toFixed()}) ${
+        PNL_usd > 0 ? "🟩" : "🟥"
+      }\n`;
+      text += `  |-PNL SOL: ${PNL_Sol_percent}% (${PNL_sol.toFixed(2)} SOL) ${
+        PNL_sol > 0 ? "🟩" : "🟥"
+      }\n`;
+      const pnlCardLink = `[Get PNL Card](https://t.me/${BOT_USERNAME}?start=pnlcard_${position.id})`;
+      text += `\n${pnlCardLink}`;
+    }
 
     return text;
   } catch (error) {
+    console.log("error: ", error);
     if ((error.message = `invalid_address`)) {
       console.log("address passed");
       throw error;
@@ -444,6 +508,21 @@ const getUserSolBalance = async (telegramId: string): Promise<number> => {
   const userAddress = getAddressFromTelegramId(telegramId);
   const userBalance = await UserSolSmartWalletClass.getSolBalance(userAddress);
   return userBalance / LAMPORTS_PER_SOL;
+};
+
+export const getPNLCard = async (positionId: string, chatId: string) => {
+  try {
+    const PnlData = await getPositionFromId(Number(positionId));
+
+    if (!PnlData) {
+      throw new Error("Invalid position id");
+    }
+    const imageBuffer = await generatePNLCard(PnlData);
+    await bot.sendPhoto(chatId, imageBuffer);
+  } catch (error) {
+    console.log("error: ", error);
+    bot.sendMessage(chatId, "could not get pnl data");
+  }
 };
 
 const getTokenHolders = async (token: string): Promise<Holder[]> => {

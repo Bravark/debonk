@@ -548,3 +548,12 @@ export const TOKEN_MAP: { [key: string]: string } = {
 
   // Add more mappings as needed
 };
+
+export const PNL_LEVELS = {
+  PROFIT_HIGH: ["minion.png"],
+  PROFIT_LOW: ["pepe.png"],
+  LOSS_HIGH: ["spidy.png"],
+  LOSS_LOW: ["sip.png"],
+};
+
+export const PNL_THRESHOLD = 10;

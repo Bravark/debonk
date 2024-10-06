@@ -294,6 +294,8 @@ export const getPositionTextSimulation = async (telegramId: string) => {
     text += `  |-PNL SOL: ${PNL_Sol_percent}% (${PNL_sol.toFixed(2)} SOL) ${
       PNL_sol > 0 ? "🟩" : "🟥"
     }\n`;
+    const pnlCardLink = `[Get PNL Card](https://t.me/${BOT_USERNAME}?start=pnlcard_${position.id})`;
+    text += `\n${pnlCardLink}`;
 
     text += `\n-------------------------------\n`;
   }

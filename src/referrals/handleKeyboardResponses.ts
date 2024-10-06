@@ -97,14 +97,8 @@ export const handleGetReferralProfits = async (
     );
   }
 
-  //convert thr profit in btc to usd
-
   const solPrice = await getSolPrice();
   const usdValue = profit * solPrice;
-
-  console.log(
-    "THIS IS THE NEW ADDITION TO THE FILE, THIS SHOULD LOG IN PRODUCTION, 9THIS IS DEBUG0"
-  );
 
   return bot.sendMessage(
     chatId.toString(),

@@ -1,5 +1,8 @@
 import { Prisma, PrismaClient, Swap } from "@prisma/client";
 import { SwapData } from "./bridge/types";
+import { PNLData } from "./pnlCard";
+import { getSolPrice, getTokenDetails } from "./helper";
+import { BOT_USERNAME } from "./constants";
 
 const prisma = new PrismaClient();
 
@@ -570,4 +573,65 @@ export const getSwapDataDb = async (messageId: string, chatId: string) => {
   } catch (error) {
     console.log("error: ", error);
   }
+};
+
+export const getPositionFromId = async (id: number) => {
+  const position = await prisma.position.findUnique({
+    where: { id: id },
+    include: { user: true },
+  });
+  if (!position) {
+    throw new Error("Position not found");
+  }
+  const tokenDetails = await getTokenDetails(position.tokenAddress);
+  const solPrice = await getSolPrice();
+  const PNL_usd = await calculateProfitLoss(
+    position.user.id,
+    position.walletId,
+    position.tokenAddress,
+    tokenDetails.priceUsd.toString()
+  );
+  const PNL_sol = PNL_usd / solPrice;
+
+  const PNL_Sol_percent = (
+    (PNL_sol /
+      (parseInt(position.amountHeld) * parseFloat(position.avgBuyPrice))) *
+    solPrice *
+    100
+  ).toFixed(2);
+  //current time
+  // Assuming position.created_at is a Date object
+  const currentTime = new Date(); // Current time
+  const createdAt = new Date(position.created_at); // Assuming created_at is a Date or timestamp
+
+  // Calculate the time difference in milliseconds
+  const timeTakenMs = currentTime.getTime() - createdAt.getTime();
+
+  // Convert the time difference to seconds, minutes, and hours
+  const timeTakenSeconds = Math.floor(timeTakenMs / 1000);
+  const timeTakenMinutes = Math.floor(timeTakenSeconds / 60);
+  const timeTakenHours = Math.floor(timeTakenMinutes / 60);
+  const timeTakenDays = Math.floor(timeTakenHours / 24);
+
+  // Format the time difference
+  const timeTakenFormatted = `${timeTakenDays}d ${timeTakenHours % 24}h ${
+    timeTakenMinutes % 60
+  }m`;
+  const entryPriceInSol = Number(position.avgBuyPrice) / solPrice;
+
+  const pnlData: PNLData = {
+    ticker: position.tokenTicker,
+    entryPrice: entryPriceInSol,
+    entryPriceUsd: Number(position.avgBuyPrice),
+    exitPrice: tokenDetails.priceNative,
+    exitPriceUsd: tokenDetails.priceUsd,
+    amountBought: Number(position.amountHeld),
+    pnlPercentage: Number(PNL_Sol_percent),
+    x: 1 + Number(PNL_Sol_percent) / 100,
+    isProfit: Number(PNL_Sol_percent) < 0 ? false : true,
+    totalTimeTaken: timeTakenFormatted,
+    userRefCode: `https://t.me/${BOT_USERNAME}?start=ref_${position.user.id}`,
+  };
+
+  return pnlData;
 };

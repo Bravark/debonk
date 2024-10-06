@@ -6,6 +6,7 @@ import TelegramBot from "node-telegram-bot-api";
 //   getTransactionStatus,
 // } from "./changeNow";
 import {
+  getPNLCard,
   getPrivateKeyStingFromTelegramId,
   getTokenText,
   reFreshPooling,
@@ -33,6 +34,7 @@ import {
 } from "./handleKeyboardResponse";
 import { handleUserBuyPositionsSimulation } from "./simulation";
 import { handleShowReferralDetails } from "./referrals/handleKeyboardResponses";
+import { generatePNLCard } from "./pnlCard";
 
 const { BOT_TOKEN } = process.env;
 if (!BOT_TOKEN) {
@@ -124,6 +126,17 @@ bot.onText(/\/start (.+)?/, async (msg, match) => {
         parse_mode: "Markdown",
       });
       //we will do the token thing here
+    } else if (sentText.startsWith("pnlcard_")) {
+      try {
+        bot.deleteMessage(chatId, msg.message_id);
+      } catch (error) {
+        console.log("error: ", error);
+      }
+
+      const positionId = sentText.split("_")[1];
+      //?LET US HANDLE THE POSITION PNL CARD THING HERE
+
+      await getPNLCard(positionId, chatId.toString());
     } else {
       await start(msg);
       console.log("invalid start command : ", sentText);
@@ -201,3 +214,17 @@ devBot.onText(/\/start/, async (msg) => {
 export { bot };
 
 bot.on(`text`, replyToAnyhowSentMessage);
+
+// generatePNLCard({
+//   ticker: "BONK",
+//   entryPrice: 10,
+//   entryPriceUsd: 100,
+//   exitPrice: 29,
+//   exitPriceUsd: 1000,
+//   amountBought: 677,
+//   pnlPercentage: -90.76,
+//   x: 10,
+//   isProfit: false,
+//   totalTimeTaken: "22m 57s",
+//   userRefCode: "https://t.me/debonk_bot?start=ref_1",
+// });
