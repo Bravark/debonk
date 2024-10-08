@@ -132,7 +132,9 @@ export async function generatePNLCard(pnlData: PNLData) {
   const fontSize = 18;
   ctx.font = `${fontSize}px ${fontStyle}`;
   ctx.fillStyle = "#FFFFFF";
+  ctx.fillStyle = pnlColor;
   ctx.fillText(`${pnlData.x.toFixed(2)}x`, marginLeft, 240);
+  ctx.fillStyle = "#FFFFFF";
   ctx.fillText(`${pnlData.totalTimeTaken}`, marginLeft + 80, 240);
 
   // Position Details
