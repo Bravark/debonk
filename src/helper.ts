@@ -6,6 +6,7 @@ import {
   UserSolSmartWalletClass,
 } from "./solana-provider";
 import {
+  checkIfMessageIsSimulation,
   deriveUserIndex,
   formatter,
   getContractAddressFromTextOrLink,
@@ -65,6 +66,7 @@ import {
 import { bs58 } from "@project-serum/anchor/dist/cjs/utils/bytes";
 import { SLippageExceedingError } from "./errors/solanaError";
 import { generatePNLCard } from "./pnlCard";
+import { text } from "stream/consumers";
 
 // add dotenv
 require("dotenv").config();
@@ -986,11 +988,57 @@ const doUserSellTokenSol = async (
   }
 };
 
+export const updateSendSellTokenMessage = async (
+  chatId: string,
+  message: TelegramBot.Message
+) => {
+  const telegramId = message.chat.id;
+  let tokenText: string;
+
+  const token = getTokenAddressFromMessage(message.text);
+  console.log("token: ", token);
+  const isSim = checkIfMessageIsSimulation(message.text);
+  console.log("isSim: ", isSim);
+  try {
+    tokenText = await getTokenText(token, telegramId.toString(), isSim);
+  } catch (error) {
+    bot.sendMessage(
+      chatId,
+      `${COULD_NOT_GET_TOKEN_DETAILS_TEXT}: Possibly Invalid Address`
+    );
+  }
+
+  if (isSim) {
+    tokenText = `${YOU_ARE_IN_THE_SIMULATION_TEXT}\n${tokenText}`;
+  }
+  const refreshButton = [
+    {
+      text: "Refresh",
+      callback_data: KEYBOARD_QUERY.UPDATE_SEND_TOKEN_SELL_DETAILS,
+    },
+    ...BACK_BUTTON,
+  ];
+  const keyboard = isSim
+    ? [...COLLECT_SELL_AMOUNT_INLINE_KEYBOARD_SIMULATION, refreshButton]
+    : [...COLLECT_SELL_AMOUNT_INLINE_KEYBOARD, refreshButton];
+
+  await bot.editMessageText(tokenText, {
+    chat_id: chatId,
+    message_id: message.message_id,
+    reply_markup: {
+      inline_keyboard: keyboard,
+    },
+    parse_mode: "Markdown",
+    disable_web_page_preview: true,
+  });
+};
+
 export const sendSellTokenMessage = async (
   token: string,
   message: TelegramBot.Message,
   chatId: string,
-  isSIm = false
+  isSIm = false,
+  isRefresh = false
 ) => {
   const telegramId = message.chat.id;
   let tokenText: string;
@@ -1006,16 +1054,35 @@ export const sendSellTokenMessage = async (
   if (isSIm) {
     tokenText = `${YOU_ARE_IN_THE_SIMULATION_TEXT}\n${tokenText}`;
   }
-
-  const tt = await bot.sendMessage(chatId, tokenText, {
-    reply_markup: {
-      inline_keyboard: isSIm
-        ? COLLECT_SELL_AMOUNT_INLINE_KEYBOARD_SIMULATION
-        : COLLECT_SELL_AMOUNT_INLINE_KEYBOARD,
+  const refreshButton = [
+    {
+      text: "Refresh",
+      callback_data: KEYBOARD_QUERY.UPDATE_SEND_TOKEN_SELL_DETAILS,
     },
-    parse_mode: "Markdown",
-    disable_web_page_preview: true,
-  });
+  ];
+  const keyboard = isSIm
+    ? [...COLLECT_SELL_AMOUNT_INLINE_KEYBOARD_SIMULATION, refreshButton]
+    : [...COLLECT_SELL_AMOUNT_INLINE_KEYBOARD, refreshButton];
+
+  if (!isRefresh) {
+    await bot.sendMessage(chatId, tokenText, {
+      reply_markup: {
+        inline_keyboard: keyboard,
+      },
+      parse_mode: "Markdown",
+      disable_web_page_preview: true,
+    });
+  } else {
+    await bot.editMessageText(tokenText, {
+      chat_id: chatId,
+      message_id: message.message_id,
+      reply_markup: {
+        inline_keyboard: keyboard,
+      },
+      parse_mode: "Markdown",
+      disable_web_page_preview: true,
+    });
+  }
 };
 
 const sendTokenDetailsByCA = async (

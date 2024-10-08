@@ -97,6 +97,8 @@ export const KEYBOARD_QUERY = {
 
   WITHDRAW_PROFIT: "withdraw_profit",
 
+  UPDATE_SEND_TOKEN_SELL_DETAILS: "update_send_token_details",
+
   UPDATE_TOKEN_DETAILS_BY_CA: "update_token_details_by_ca",
   S_UPDATE_TOKEN_DETAILS_BY_CA: "s_update_token_details_by_ca",
 

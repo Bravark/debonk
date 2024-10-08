@@ -1,6 +1,11 @@
 import { start } from "repl";
 // import { KEYBOARD_QUERY } from "./constants";
-import { bot, sendSellTokenMessage, toast } from "./helper";
+import {
+  bot,
+  sendSellTokenMessage,
+  toast,
+  updateSendSellTokenMessage,
+} from "./helper";
 
 import {
   handleBackToHome,
@@ -165,6 +170,19 @@ export const queryCallBack = async (
       });
       try {
         await handleUserSellSimulation(chatId.toString(), message);
+      } catch (error) {
+        console.log("error: ", error);
+        toast(chatId.toString(), "An error occurred: ");
+      }
+
+      break;
+
+    case KEYBOARD_QUERY.UPDATE_SEND_TOKEN_SELL_DETAILS:
+      bot.answerCallbackQuery(callbackQuery.id, {
+        text: "Sell Token in Simulation Mode",
+      });
+      try {
+        await updateSendSellTokenMessage(chatId.toString(), message);
       } catch (error) {
         console.log("error: ", error);
         toast(chatId.toString(), "An error occurred: ");

@@ -6,6 +6,7 @@ import {
   NETWORK_MAP,
   TOKEN_MAP,
   Validator,
+  YOU_ARE_IN_THE_SIMULATION_TEXT,
 } from "./constants";
 import TelegramBot from "node-telegram-bot-api";
 import { Holder, ResponseObject, TokenData } from "./types";
@@ -465,6 +466,15 @@ export const formatter = ({
     minimumFractionDigits: decimal,
     useGrouping: true,
   });
+};
+
+export const checkIfMessageIsSimulation = (messageText: string): boolean => {
+  // Check if the message contains the simulation keyword
+  const simulationKeyword = YOU_ARE_IN_THE_SIMULATION_TEXT;
+  if (messageText.includes(simulationKeyword)) {
+    return true;
+  }
+  return false;
 };
 
 export function getContractAddressFromTextOrLink(input: string) {
