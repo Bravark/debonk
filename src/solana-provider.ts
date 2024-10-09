@@ -1170,8 +1170,17 @@ export class UserSolSmartWalletClass {
 
     // If we are not getting a response back, the transaction has not confirmed.
     if (!transactionResponse) {
-      console.error("Transaction not confirmed");
-      return;
+      console.error("Transaction not confirmed: trying one more time...");
+      let latestBlockhash = await connection.getLatestBlockhash();
+      await this.createSendConfirmRetryTransaction(
+        messageV0,
+        senderKeypairs,
+        connection,
+        latestBlockhash,
+        false,
+        feePayerKeypair,
+        initialInstructions
+      );
     }
 
     if (transactionResponse.meta?.err) {
