@@ -69,14 +69,15 @@ export const validateAmountGetTokenAndBuySimulation = async (
 
   if (tokenAddressMatch && tokenAddressMatch[1]) {
     const tokenAddress = tokenAddressMatch[1];
-
-    bot.editMessageText(`${messageText}\n\n✅ Simulation Buy Successful `, {
-      parse_mode: "Markdown",
-      disable_web_page_preview: true,
-      reply_markup: message.reply_markup,
-      chat_id: chatId,
-      message_id: messageId,
-    });
+    try {
+      bot.editMessageText(`${messageText}\n\n✅ Simulation Buy Successful `, {
+        parse_mode: "Markdown",
+        disable_web_page_preview: true,
+        reply_markup: message.reply_markup,
+        chat_id: chatId,
+        message_id: messageId,
+      });
+    } catch (error) {}
     await completeBuyActionSimulation(telegramId, tokenAddress, amount);
   } else {
     console.error("Token Address not found in the message");

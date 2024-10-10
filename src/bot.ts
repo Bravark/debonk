@@ -46,16 +46,23 @@ devBot.on("callback_query", queryCallBackDevBot);
 const bottoken = BOT_TOKEN;
 
 let bot: TelegramBot;
-
-bot = new TelegramBot(bottoken, {
-  polling: true,
-});
+try {
+  bot = new TelegramBot(bottoken, {
+    polling: true,
+  });
+} catch (error) {
+  console.log("main ot process error: ", error);
+}
 
 bot.on("polling_error", (pollError) => {
   console.log(`MainBot : polling_error: ${pollError}`);
 });
 //to register callback query
-bot.on("callback_query", queryCallBack);
+try {
+  bot.on("callback_query", queryCallBack);
+} catch (error) {
+  console.log("error: ", error);
+}
 
 bot.onText(/^\/start$/, async (msg, match) => {
   if (match[0] === "/start") {

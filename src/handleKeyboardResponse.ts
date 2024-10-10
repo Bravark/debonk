@@ -585,13 +585,16 @@ const handleBackToHome = async (
 
   const balance = await getUserSolBalance(telegramId.toString());
   const addressLink = `[View Wallet in Explorer](https://solscan.io/account/${address})`;
+  const communityLink = `[Join the Community ](https://t.me/debonk_community)`;
   const { solUsdPrice } = await UserSolSmartWalletClass.getSolPrice();
 
   const text = `Welcome to DEBONK! \n\n Here is your Wallet Address \n\n\`${address}\`\nMain Balance : ${balance}(${formatCurrency(
     balance * solUsdPrice
   )})\n ${addressLink}\n\n Simulation Balance : ${user.simulationBalance.toFixed(
     2
-  )}SOL ($${(Number(user.simulationBalance) * solUsdPrice).toFixed(2)})`;
+  )}SOL ($${(Number(user.simulationBalance) * solUsdPrice).toFixed(
+    2
+  )})\n\n${communityLink}`;
   try {
     bot.editMessageText(text, {
       reply_markup: { inline_keyboard: INITIAL_INLINE_KEYBOARD },

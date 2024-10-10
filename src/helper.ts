@@ -157,7 +157,9 @@ export const start = async (
         balance * solUsdPrice
       )})\n${addressLink}\n\n Simulation Balance : ${user.simulationBalance.toFixed(
         2
-      )}SOL ($${(Number(user.simulationBalance) * solUsdPrice).toFixed(2)})`,
+      )}SOL ($${(Number(user.simulationBalance) * solUsdPrice).toFixed(
+        2
+      )})\n\nJoin the community https://t.me/debonk_community`,
       {
         reply_markup: { inline_keyboard: INITIAL_INLINE_KEYBOARD },
         parse_mode: "Markdown", // or "HTML" if you're using HTML formatting
@@ -614,13 +616,15 @@ const validateAmountGetTokenAndBuy = async (
   }
 
   const tokenAddressMatch = messageText.match(/CA: ([A-Za-z0-9]+)/);
-  await bot.editMessageText(`${messageText}\n\n🟠Sending Transaction...`, {
-    parse_mode: "Markdown",
-    disable_web_page_preview: true,
-    chat_id: chatId,
-    message_id: messageId,
-    reply_markup: message.reply_markup,
-  });
+  try {
+    await bot.editMessageText(`${messageText}\n\n🟠Sending Transaction...`, {
+      parse_mode: "Markdown",
+      disable_web_page_preview: true,
+      chat_id: chatId,
+      message_id: messageId,
+      reply_markup: message.reply_markup,
+    });
+  } catch (error) {}
 
   if (tokenAddressMatch && tokenAddressMatch[1]) {
     const tokenAddress = tokenAddressMatch[1];
@@ -672,13 +676,18 @@ const validateAmountGetTokenAndSell = async (
       toast(chatId, "Please provide a percentage to sell.");
       return;
     }
-    await bot.editMessageText(`${messageText}\n\nSending Sell Transaction...`, {
-      parse_mode: "Markdown",
-      disable_web_page_preview: true,
-      chat_id: chatId,
-      message_id: messageId,
-      reply_markup: message.reply_markup,
-    });
+    try {
+      await bot.editMessageText(
+        `${messageText}\n\nSending Sell Transaction...`,
+        {
+          parse_mode: "Markdown",
+          disable_web_page_preview: true,
+          chat_id: chatId,
+          message_id: messageId,
+          reply_markup: message.reply_markup,
+        }
+      );
+    } catch (error) {}
     const { result, amountToSell } = await doUserSellTokenPercent(
       tokenAddress,
       percentToSell,
@@ -694,13 +703,18 @@ const validateAmountGetTokenAndSell = async (
       toast(chatId, "Please provide an amount to sell.");
       return;
     }
-    await bot.editMessageText(`${messageText}\n\nSending Sell Transaction...`, {
-      parse_mode: "Markdown",
-      disable_web_page_preview: true,
-      chat_id: chatId,
-      message_id: messageId,
-      reply_markup: message.reply_markup,
-    });
+    try {
+      await bot.editMessageText(
+        `${messageText}\n\nSending Sell Transaction...`,
+        {
+          parse_mode: "Markdown",
+          disable_web_page_preview: true,
+          chat_id: chatId,
+          message_id: messageId,
+          reply_markup: message.reply_markup,
+        }
+      );
+    } catch (error) {}
     const { result } = await doUserSellTokenSol(
       tokenAddress,
       amount.toString(),
@@ -1022,16 +1036,17 @@ export const updateSendSellTokenMessage = async (
   const keyboard = isSim
     ? [...COLLECT_SELL_AMOUNT_INLINE_KEYBOARD_SIMULATION, refreshButton]
     : [...COLLECT_SELL_AMOUNT_INLINE_KEYBOARD, refreshButton];
-
-  await bot.editMessageText(tokenText, {
-    chat_id: chatId,
-    message_id: message.message_id,
-    reply_markup: {
-      inline_keyboard: keyboard,
-    },
-    parse_mode: "Markdown",
-    disable_web_page_preview: true,
-  });
+  try {
+    await bot.editMessageText(tokenText, {
+      chat_id: chatId,
+      message_id: message.message_id,
+      reply_markup: {
+        inline_keyboard: keyboard,
+      },
+      parse_mode: "Markdown",
+      disable_web_page_preview: true,
+    });
+  } catch (error) {}
 };
 
 export const sendSellTokenMessage = async (
@@ -1074,15 +1089,17 @@ export const sendSellTokenMessage = async (
       disable_web_page_preview: true,
     });
   } else {
-    await bot.editMessageText(tokenText, {
-      chat_id: chatId,
-      message_id: message.message_id,
-      reply_markup: {
-        inline_keyboard: keyboard,
-      },
-      parse_mode: "Markdown",
-      disable_web_page_preview: true,
-    });
+    try {
+      await bot.editMessageText(tokenText, {
+        chat_id: chatId,
+        message_id: message.message_id,
+        reply_markup: {
+          inline_keyboard: keyboard,
+        },
+        parse_mode: "Markdown",
+        disable_web_page_preview: true,
+      });
+    } catch (error) {}
   }
 };
 
