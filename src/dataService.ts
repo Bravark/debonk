@@ -2,6 +2,7 @@ import { DexToolResponse, ResponseObject, TokenDetails } from "./types";
 import { calculatePercentageChange } from "./utils";
 
 export const getTokenDetails_DEXTOOLS = async (token: string) => {
+  console.log("token: ", token);
   console.log("DEXTOOLS");
   try {
     const res = await fetch(
