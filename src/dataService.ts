@@ -34,9 +34,11 @@ export const getTokenDetails_DEXTOOLS = async (token: string) => {
 
     let result: TokenDetails;
 
+    console.log("data.periodStats xxx: ", data.periodStats);
     const priceInSol =
       (data.periodStats["1h"].price.chain.last * data.price) /
       data.periodStats["1h"].price.usd.last;
+    console.log("data.periodStatsyyyy: ", data.periodStats);
 
     result = {
       name: data.name,
