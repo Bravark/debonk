@@ -22,7 +22,7 @@ export const getTokenDetails_DEXTOOLS = async (token: string) => {
       }
     );
     const _data = await res.json();
-    // console.log("_data: ", _data);
+    console.log("_data: ", _data);
 
     let data: DexToolResponse;
     if (_data.data) {
@@ -34,11 +34,11 @@ export const getTokenDetails_DEXTOOLS = async (token: string) => {
 
     let result: TokenDetails;
 
-    console.log("data.periodStats xxx: ", data.periodStats);
+    console.log("data.periodStats xxx: ", data);
     const priceInSol =
       (data.periodStats["1h"].price.chain.last * data.price) /
       data.periodStats["1h"].price.usd.last;
-    console.log("data.periodStatsyyyy: ", data.periodStats);
+    console.log("data.periodStatsyyyy: ", data);
 
     result = {
       name: data.name,
