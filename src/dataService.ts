@@ -88,6 +88,7 @@ export const getTokenDetails_DEXSCREENER = async (
   token: string
 ): Promise<TokenDetails> => {
   console.log("DEXSCREENER");
+  console.log("token: ", token);
   const res = await fetch(
     `https://api.dexscreener.com/latest/dex/tokens/${token}`,
     {
