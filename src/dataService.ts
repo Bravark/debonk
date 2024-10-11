@@ -38,6 +38,38 @@ export const getTokenDetails_DEXTOOLS = async (token: string) => {
     // console.log("data: ", data);
 
     let result: TokenDetails;
+    if (!data) {
+      const res = await fetch(
+        `https://www.dextools.io/shared/data/pair?address=${token}&chain=solana&audit=false&locks=true`,
+        {
+          headers: {
+            accept: "application/json",
+            "accept-language": "en-GB,en-NG;q=0.9,en-US;q=0.8,en;q=0.7",
+            "content-type": "application/json",
+            priority: "u=1, i",
+            "sec-fetch-dest": "empty",
+            "sec-fetch-mode": "cors",
+            "sec-fetch-site": "same-origin",
+            cookie:
+              "_pk_id.1.b299=7c727f644b8e74ac.1727104557.; _pk_id.5.b299=c7057c46d727efc0.1727104557.; cf_clearance=bDcNSxW4eG6iCmr0exVeppdlsLAjGqyTZ.pqDwBY1_c-1728646284-1.2.1.1-iKVc6BHRGKiUIoODXmjdrwrmTfu53KIzo3NB_OK.KQJ59HuSgy3IkSmfYgTSkKxVRqX16gAKm.qC3jOcx0.9hL7g5Dd4fQchOfU0bFe47qjPJv_bTVQRuZV6j98_LuNIo0TdALPjyzXRKqXqOotE27yaGgMCfFG2i3dH0aUU_tlKpzEtUa_JhRuGm6gDGBjUUIyGKzgsYtmYAWKH9Mk6hqw9dlZm_91s3H7f_BWmG404L80SoTimL9iH1l8mFhV0lSWB2QQBf2PnsFghLbdihnJt6eKmYYMfIYUyW5QlcGcjVhSLc2ZcEjjXZuISftKkKIqgRirPq4HwdTLL9JKPgQTQTu_JhMx3Xd0M6CY32nK8b4CM2beqDzEIaCF2fFEB; _pk_ref.1.b299=%5B%22%22%2C%22%22%2C1728648326%2C%22https%3A%2F%2Fsolscan.io%2F%22%5D; _pk_ses.1.b299=1; _pk_ref.5.b299=%5B%22%22%2C%22%22%2C1728648326%2C%22https%3A%2F%2Fsolscan.io%2F%22%5D; _pk_ses.5.b299=1; __cf_bm=UaGUqFVf1hLjLB.2CJm_gA5MKg9D7q_RjQS4Ty9VL.8-1728648354-1.0.1.1-agcrsGPVI_HUaw7qKQUqFoSqtaECzNsAUKCEsYoXQMqQCskZsk5oIhF0MKMZLJIICRGBIouzAgRL.z3OMTTcow",
+            Referer:
+              "https://www.dextools.io/app/en/solana/pair-explorer/ATpAEZhkBJvDES8BhQy4zQEaVuZHbw2FWrmwixEQpump?t=1728646285447",
+            "Referrer-Policy": "strict-origin-when-cross-origin",
+          },
+          body: null,
+          method: "GET",
+        }
+      );
+
+      const _data = await res.json();
+      console.log("_data: ", _data);
+
+      if (_data.data) {
+        data = _data.data[0] as DexToolResponse;
+      } else {
+        data = _data.results[0] as DexToolResponse;
+      }
+    }
 
     console.log("data.periodStats xxx: ", data);
     const priceInSol =
