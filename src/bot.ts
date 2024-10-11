@@ -50,6 +50,8 @@ try {
   bot = new TelegramBot(bottoken, {
     polling: true,
   });
+
+  console.log("started polling, LFG!!!");
 } catch (error) {
   console.log("main ot process error: ", error);
 }
