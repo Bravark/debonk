@@ -95,6 +95,7 @@ export const getTokenDetails_DEXSCREENER = async (
     }
   );
   const data: ResponseObject = await res.json();
+  console.log("data: ", data);
 
   try {
     // console.log("data.pairs: ", data.pairs);
