@@ -10,13 +10,16 @@ export const getTokenDetails_DEXTOOLS = async (token: string) => {
       {
         headers: {
           accept: "application/json",
+          "accept-language": "en-GB,en-NG;q=0.9,en-US;q=0.8,en;q=0.7",
           "content-type": "application/json",
-          "sec-ch-ua":
-            '"Google Chrome";v="129", "Not=A?Brand";v="8", "Chromium";v="129"',
-          "sec-ch-ua-mobile": "?0",
-          "sec-ch-ua-platform": '"Windows"',
+          priority: "u=1, i",
+          "sec-fetch-dest": "empty",
+          "sec-fetch-mode": "cors",
+          "sec-fetch-site": "same-origin",
+          cookie:
+            "_pk_id.1.b299=7c727f644b8e74ac.1727104557.; _pk_id.5.b299=c7057c46d727efc0.1727104557.; cf_clearance=bDcNSxW4eG6iCmr0exVeppdlsLAjGqyTZ.pqDwBY1_c-1728646284-1.2.1.1-iKVc6BHRGKiUIoODXmjdrwrmTfu53KIzo3NB_OK.KQJ59HuSgy3IkSmfYgTSkKxVRqX16gAKm.qC3jOcx0.9hL7g5Dd4fQchOfU0bFe47qjPJv_bTVQRuZV6j98_LuNIo0TdALPjyzXRKqXqOotE27yaGgMCfFG2i3dH0aUU_tlKpzEtUa_JhRuGm6gDGBjUUIyGKzgsYtmYAWKH9Mk6hqw9dlZm_91s3H7f_BWmG404L80SoTimL9iH1l8mFhV0lSWB2QQBf2PnsFghLbdihnJt6eKmYYMfIYUyW5QlcGcjVhSLc2ZcEjjXZuISftKkKIqgRirPq4HwdTLL9JKPgQTQTu_JhMx3Xd0M6CY32nK8b4CM2beqDzEIaCF2fFEB; _pk_ref.1.b299=%5B%22%22%2C%22%22%2C1728646285%2C%22https%3A%2F%2Fsolscan.io%2F%22%5D; _pk_ses.1.b299=1; _pk_ref.5.b299=%5B%22%22%2C%22%22%2C1728646285%2C%22https%3A%2F%2Fsolscan.io%2F%22%5D; _pk_ses.5.b299=1; __cf_bm=M6zNdlOnpnoKBCIwd5qr8SdqnBY42lUKDIeTdKLhk2c-1728646304-1.0.1.1-WMpdhJzc3ZzbMC2tjs8dvkl60HrLinsPoqptRVWczr0SeJBnNVZICeLhU7PBlm_K38YHMlPm1QdL3duQDVcK4g",
           Referer:
-            "https://www.dextools.io/app/en/solana/pair-explorer/BbxxfuZFC8owtCnaSx9WwFACzum78bZzb5STCTrDQR2G?t=1727523395484",
+            "https://www.dextools.io/app/en/solana/pair-explorer/8g4tAcENPc39Hcj7UdbSwntivkqsxfB5C18pyYTEpump?t=1728646285447",
           "Referrer-Policy": "strict-origin-when-cross-origin",
         },
         body: null,
