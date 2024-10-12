@@ -150,6 +150,7 @@ export const start = async (
     });
     const balance = await getUserSolBalance(telegramId.toString());
     const addressLink = `[View Wallet in Explorer](https://solscan.io/account/${address})`;
+    const comLink = `[https://t.me/debonk_community](https://t.me/debonk_community)`;
     const { solUsdPrice } = await UserSolSmartWalletClass.getSolPrice();
     bot.sendMessage(
       chatId,
@@ -159,7 +160,7 @@ export const start = async (
         2
       )}SOL ($${(Number(user.simulationBalance) * solUsdPrice).toFixed(
         2
-      )})\n\nJoin the community https://t.me/debonk_community`,
+      )})\n\nJoin the community ${comLink}`,
       {
         reply_markup: { inline_keyboard: INITIAL_INLINE_KEYBOARD },
         parse_mode: "Markdown", // or "HTML" if you're using HTML formatting

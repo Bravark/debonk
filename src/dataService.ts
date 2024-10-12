@@ -71,11 +71,9 @@ export const getTokenDetails_DEXTOOLS = async (token: string) => {
       }
     }
 
-    console.log("data.periodStats xxx: ", data);
     const priceInSol =
       (data.periodStats["1h"].price.chain.last * data.price) /
       data.periodStats["1h"].price.usd.last;
-    console.log("data.periodStatsyyyy: ", data);
 
     result = {
       name: data.name,
@@ -170,4 +168,81 @@ export const getTokenDetails_DEXSCREENER = async (
     return null;
   }
 };
-//THIS IS A TEST FOR THE PUSHING
+export const getTokenDetailsByTicker_DEXTOOLS = async (ticker: string) => {
+  const res = await fetch(
+    `https://www.dextools.io/shared/search/pair?query=${ticker}&strict=true`,
+    {
+      headers: {
+        accept: "application/json",
+        "accept-language": "en-GB,en-NG;q=0.9,en-US;q=0.8,en;q=0.7",
+        "content-type": "application/json",
+        "if-none-match": 'W/"22487-MndiOCuZTGpLaZU8TEPF9EPubY8"',
+        priority: "u=1, i",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+        cookie:
+          "_pk_id.1.b299=7c727f644b8e74ac.1727104557.; _pk_id.5.b299=c7057c46d727efc0.1727104557.; _pk_ref.1.b299=%5B%22%22%2C%22%22%2C1728648326%2C%22https%3A%2F%2Fsolscan.io%2F%22%5D; _pk_ses.1.b299=1; _pk_ref.5.b299=%5B%22%22%2C%22%22%2C1728648326%2C%22https%3A%2F%2Fsolscan.io%2F%22%5D; _pk_ses.5.b299=1; cf_clearance=lolx83Z1.WPd9THxPwvMRTiDzpHU.hE_xL0R04pJvhM-1728649171-1.2.1.1-N0XqVLHO7e8P_wGHUbJztqi6S8z.ykwPbCQEG.9pBLlKfM3EqNnevc1oJHgEjnKyN3MvThVlw.fUv_eZHIBX0I.JMyCL0d_C3kR20aeEswy5gC25gQqd.4XfZwbpsIn2ge_Kls7xsEjDmtdQ7JfoSrwoRyMIr6N5I37QQB5bHzqeiIjUDjXOSdFijf5XAeIDq55jTLmkrOjF1FW_RGGZjrz_bYI5LHMqYOpvZ_judm0veDJxoP4EuMs.zFzIrDCXLCdBaQiefMWiFTu6D60jBU.byJQYG.DeGvYXvxFVtaIrg8.q1t9JF8fj2Gp_I0TTiSkZgd5EwTysbCaZ95jPkIZQXCjtiZkvM2bGHFZRC66X7R8dlZrc1gNLV65LzhCno0yC8LCJwHJSEuXp8YgDy.hFip8sp8.2IwhAGpvZJE0; __cf_bm=JfZj8ezdfNcZkmBldwL6PIWhRJcMY6Zsp_wHjp2ZR1w-1728649181-1.0.1.1-7CWWM1dTHm0v8.YK.mgA.JvY6D5WVvMzwNjYIjM_xWL9xBA1dvyBPGEvdbaRlJXT1Q35JQADSKCT0ei1Rq7qeg",
+        Referer:
+          "https://www.dextools.io/app/en/solana/pair-explorer/ATpAEZhkBJvDES8BhQy4zQEaVuZHbw2FWrmwixEQpump?t=1728649171680",
+        "Referrer-Policy": "strict-origin-when-cross-origin",
+      },
+      body: null,
+      method: "GET",
+    }
+  );
+  let data: DexToolResponse;
+  const _data = await res.json();
+
+  if (_data.data) {
+    data = _data.data.filter(
+      (d: DexToolResponse) => d.id.chain.toLowerCase() === "solana"
+    )[0];
+  } else {
+    data = _data.results.filter(
+      (d: DexToolResponse) => d.id.chain.toLowerCase() === "solana"
+    )[0];
+  }
+  let result: TokenDetails;
+
+  const priceInSol =
+    (data.periodStats["1h"].price.chain.last * data.price) /
+    data.periodStats["1h"].price.usd.last;
+
+  result = {
+    name: data.name,
+    symbol: data.symbol,
+    address: data.id.token,
+    priceUsd: data.price,
+    priceNative: priceInSol,
+    mc: data.price * Number(data.token.totalSupply),
+    liquidityInUsd: data.metrics.liquidity,
+    telegramUrl: data.token.links.telegram,
+    twitterUrl: data.token.links.twitter,
+    websiteUrl: data.token.links.website,
+    volume: {
+      m5: data.periodStats["5m"].volume?.buys,
+      h1: data.periodStats["1h"].volume?.buys,
+      h24: data.price24h ? data.price24h?.buys : 0,
+    },
+    change: {
+      m5: calculatePercentageChange(
+        data.periodStats["5m"].price.usd.last,
+        data.price
+      ),
+      h1: calculatePercentageChange(
+        data.periodStats["1h"].price.usd.last,
+        data.price
+      ),
+      h24: calculatePercentageChange(
+        data.periodStats["24h"].price.usd.last,
+        data.price
+      ),
+    },
+  };
+
+  console.log("result: ", result);
+  return result;
+};
+
+getTokenDetailsByTicker_DEXTOOLS("pepe");
