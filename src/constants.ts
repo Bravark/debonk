@@ -509,7 +509,7 @@ export const BUY_AND_SELL_KEYBOARD = [
     },
     ...BACK_BUTTON,
   ],
-  [CANCEL_BUTTON],
+  CANCEL_BUTTON,
 ];
 
 export const SIMULATION_BUY_AND_SELL_KEYBOARD = [
@@ -530,7 +530,7 @@ export const SIMULATION_BUY_AND_SELL_KEYBOARD = [
     },
     ...BACK_BUTTON,
   ],
-  [CANCEL_BUTTON],
+  CANCEL_BUTTON,
 ];
 
 export const TOKEN_MAP: { [key: string]: string } = {
