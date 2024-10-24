@@ -185,8 +185,8 @@ export async function generatePNLCard(pnlData: PNLData) {
   ctx.fillText(text3, marginLeft + 120, 430);
 
   const buffer = canvas.toBuffer("image/png");
-  const write = path.resolve(__dirname, "./pnl.jpeg");
-  fs.writeFileSync(write, buffer);
+  // const write = path.resolve(__dirname, "./pnl.jpeg");
+  // fs.writeFileSync(write, buffer);
 
   return buffer;
   // Return the Canvas stream (in-memory)

@@ -27,7 +27,6 @@ export const getTokenDetails_DEXTOOLS = async (token: string) => {
       }
     );
     const _data = await res.json();
-    console.log("_data: ", _data);
 
     let data: DexToolResponse;
     if (_data.data) {
@@ -192,14 +191,17 @@ export const getTokenDetailsByTicker_DEXTOOLS = async (ticker: string) => {
   let data: DexToolResponse;
   const _data = await res.json();
 
+  // console.log("_data.data: ", _data.results);
   if (_data.data) {
     data = _data.data.filter(
       (d: DexToolResponse) => d.id.chain.toLowerCase() === "solana"
     )[0];
-  } else {
+  } else if (_data.results) {
     data = _data.results.filter(
       (d: DexToolResponse) => d.id.chain.toLowerCase() === "solana"
     )[0];
+  } else {
+    return null;
   }
   let result: TokenDetails;
 
@@ -239,7 +241,6 @@ export const getTokenDetailsByTicker_DEXTOOLS = async (ticker: string) => {
     },
   };
 
-  console.log("result: ", result);
   return result;
 };
 
