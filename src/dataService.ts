@@ -62,7 +62,6 @@ export const getTokenDetails_DEXTOOLS = async (token: string) => {
       );
 
       const _data = await res.json();
-      console.log("_data: ", _data);
 
       if (_data.data) {
         data = _data.data[0] as DexToolResponse;
@@ -126,7 +125,6 @@ export const getTokenDetails_DEXSCREENER = async (
     }
   );
   const data: ResponseObject = await res.json();
-  console.log("data: ", data);
 
   try {
     // console.log("data.pairs: ", data.pairs);
